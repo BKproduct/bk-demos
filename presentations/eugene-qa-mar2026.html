@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Copilot — Ответы на вопросы</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d0f14;
+  --bg2: #141720;
+  --bg3: #1a1e28;
+  --text: #e8eaf0;
+  --secondary: #9aa0b4;
+  --muted: #5c6278;
+  --accent: #4f8ef7;
+  --accent2: #7c6ff7;
+  --green: #3dd68c;
+  --orange: #f7994f;
+  --red: #f75f5f;
+  --border: #232737;
+  --font-h: 'Cormorant Garamond', Georgia, serif;
+  --font-b: 'Inter', -apple-system, sans-serif;
+}
+
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font-b); }
+
+.presentation { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: clamp(32px, 5vw, 80px);
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+.slide.active { opacity: 1; transform: translateY(0); pointer-events: all; }
+.slide.exit { opacity: 0; transform: translateY(-24px); }
+
+/* ─── GRID BACKGROUNDS ─── */
+.bg-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.4;
+}
+.glow {
+  position: absolute; border-radius: 50%; filter: blur(120px); z-index: 0; pointer-events: none;
+}
+
+.content { position: relative; z-index: 1; width: 100%; max-width: 920px; }
+
+/* ─── SLIDE 1 — TITLE ─── */
+#slide-1 .glow-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(79,142,247,0.12) 0%, transparent 70%); top: -150px; right: -100px; }
+#slide-1 .glow-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(124,111,247,0.08) 0%, transparent 70%); bottom: -100px; left: -80px; }
+
+.tag {
+  display: inline-block; padding: 5px 14px; border-radius: 20px;
+  background: rgba(79,142,247,0.12); border: 1px solid rgba(79,142,247,0.25);
+  color: var(--accent); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.title-main {
+  font-family: var(--font-h); font-size: clamp(2.4rem, 5vw, 4.5rem); font-weight: 500;
+  line-height: 1.1; color: var(--text); margin-bottom: 16px;
+}
+.title-main span { color: var(--accent); }
+
+.subtitle {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem); color: var(--secondary); line-height: 1.6; max-width: 600px;
+  margin-bottom: 40px;
+}
+
+.meta-row { display: flex; gap: 32px; flex-wrap: wrap; }
+.meta-item { display: flex; flex-direction: column; gap: 4px; }
+.meta-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.meta-value { font-size: 0.95rem; color: var(--secondary); font-weight: 500; }
+
+/* ─── QUESTION SLIDES ─── */
+.q-header { margin-bottom: clamp(20px, 3vh, 36px); }
+.q-number {
+  font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.q-number::after { content: ''; flex: 1; height: 1px; background: rgba(79,142,247,0.2); max-width: 60px; }
+
+.q-title {
+  font-family: var(--font-h); font-size: clamp(1.6rem, 3.5vw, 2.8rem); font-weight: 500;
+  line-height: 1.2; color: var(--text);
+}
+
+/* ─── ANSWER CARDS ─── */
+.answer-grid { display: grid; gap: 14px; }
+.answer-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.answer-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+  padding: clamp(14px, 2vw, 22px);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: rgba(79,142,247,0.3); transform: translateY(-2px); }
+
+.card-icon { font-size: 1.4rem; margin-bottom: 10px; }
+.card-title { font-size: 0.8rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.card-body { font-size: clamp(0.8rem, 1.2vw, 0.9rem); color: var(--secondary); line-height: 1.6; }
+.card-body strong { color: var(--text); }
+
+.pill {
+  display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;
+  margin: 3px 2px;
+}
+.pill-green { background: rgba(61,214,140,0.1); color: var(--green); border: 1px solid rgba(61,214,140,0.2); }
+.pill-blue { background: rgba(79,142,247,0.1); color: var(--accent); border: 1px solid rgba(79,142,247,0.2); }
+.pill-orange { background: rgba(247,153,79,0.1); color: var(--orange); border: 1px solid rgba(247,153,79,0.2); }
+.pill-purple { background: rgba(124,111,247,0.1); color: var(--accent2); border: 1px solid rgba(124,111,247,0.2); }
+.pill-red { background: rgba(247,95,95,0.1); color: var(--red); border: 1px solid rgba(247,95,95,0.2); }
+
+/* ─── YES BADGE ─── */
+.yes-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(61,214,140,0.08); border: 1px solid rgba(61,214,140,0.2);
+  border-radius: 8px; padding: 10px 18px; margin-bottom: 20px;
+}
+.yes-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+.yes-text { font-size: 0.85rem; font-weight: 600; color: var(--green); }
+
+/* ─── BIG ANSWER ─── */
+.big-answer {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem); color: var(--secondary);
+  line-height: 1.7; margin-bottom: 24px;
+  border-left: 3px solid var(--accent); padding-left: 20px;
+}
+.big-answer strong { color: var(--text); }
+
+/* ─── LIST ITEMS ─── */
+.check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.check-list li { display: flex; align-items: flex-start; gap: 12px; font-size: clamp(0.8rem, 1.2vw, 0.9rem); color: var(--secondary); line-height: 1.5; }
+.check-list li::before { content: '✓'; color: var(--green); font-weight: 700; min-width: 16px; margin-top: 1px; }
+.check-list li strong { color: var(--text); }
+
+/* ─── METRICS ROW ─── */
+.metrics-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.metric-box {
+  flex: 1; min-width: 120px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px; text-align: center;
+}
+.metric-value { font-family: var(--font-h); font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--accent); font-weight: 500; }
+.metric-label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ─── TABLE ─── */
+.info-table { width: 100%; border-collapse: collapse; font-size: clamp(0.75rem, 1.1vw, 0.88rem); }
+.info-table th { background: var(--bg3); color: var(--accent); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+.info-table td { padding: 10px 14px; border-bottom: 1px solid rgba(35,39,55,0.6); color: var(--secondary); vertical-align: top; }
+.info-table td strong { color: var(--text); }
+.info-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ─── TWO-COLUMN LAYOUT ─── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+
+/* ─── DIVIDER ─── */
+.divider { width: 40px; height: 3px; background: var(--accent); border-radius: 2px; margin: 20px 0; }
+
+/* ─── DISCLAIMER BOX ─── */
+.disclaimer {
+  background: rgba(247,153,79,0.06); border: 1px solid rgba(247,153,79,0.2); border-radius: 8px;
+  padding: 12px 16px; font-size: 0.78rem; color: var(--orange); line-height: 1.5; margin-top: 16px;
+}
+
+/* ─── SLIDE 9 (FINAL) ─── */
+.final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+.final-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+  transition: border-color 0.2s;
+}
+.final-card:hover { border-color: rgba(79,142,247,0.3); }
+.final-card-num { font-family: var(--font-h); font-size: 2.2rem; color: rgba(79,142,247,0.3); font-weight: 600; }
+.final-card-title { font-size: 0.85rem; font-weight: 600; color: var(--text); margin: 6px 0; }
+.final-card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+/* ─── NAV ─── */
+.nav-dots {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 100;
+}
+.dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--muted); cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.dot.active { background: var(--accent); transform: scale(1.4); }
+.dot:hover { background: var(--secondary); }
+
+.slide-counter {
+  position: fixed; bottom: 24px; right: 28px;
+  font-size: 0.75rem; color: var(--muted); z-index: 100; font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 2px; background: var(--accent);
+  transition: width 0.4s ease; z-index: 100;
+}
+
+.nav-arrows {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 12px; z-index: 100;
+}
+.arrow-btn {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--secondary); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.arrow-btn:hover { background: var(--bg3); color: var(--text); border-color: rgba(79,142,247,0.4); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .answer-grid.cols-2, .answer-grid.cols-3, .two-col { grid-template-columns: 1fr; }
+  .final-grid { grid-template-columns: 1fr; }
+  .metrics-row { flex-wrap: wrap; }
+  .metric-box { min-width: 100px; }
+  .nav-dots { display: none; }
+}
+@media (max-width: 480px) {
+  .slide { padding: 20px; overflow-y: auto; justify-content: flex-start; padding-top: 40px; }
+}
+</style>
+</head>
+<body>
+
+<div class="presentation" id="presentation">
+
+  <!-- ─── SLIDE 1: TITLE ─── -->
+  <div class="slide active" id="slide-1">
+    <div class="bg-grid"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="content">
+      <div class="tag">Health Copilot · Март 2026</div>
+      <h1 class="title-main">Ответы на <span>7 вопросов</span></h1>
+      <p class="subtitle">Детальные ответы по продукту — ввод данных, генетика, трекеры, адаптация тренировок и медицинские рекомендации.</p>
+      <div class="meta-row">
+        <div class="meta-item">
+          <span class="meta-label">Для кого</span>
+          <span class="meta-value">Евгений Хантсель, wellness-специалист</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Продукт</span>
+          <span class="meta-value">Health Copilot by AI-Automation.Studio</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Вопросов</span>
+          <span class="meta-value">7 → следующие слайды</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 2: Q1 — Ввод данных ─── -->
+  <div class="slide" id="slide-2">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 1</div>
+        <h2 class="q-title">Ввод данных клиента</h2>
+      </div>
+      <div class="yes-badge"><div class="yes-dot"></div><span class="yes-text">Да — возможно через любой канал, включая ввод третьим лицом</span></div>
+      <div class="answer-grid cols-2">
+        <div class="card">
+          <div class="card-title">📱 Через Telegram-бот</div>
+          <div class="card-body">
+            Основной и самый удобный канал. Клиент или ассистент отправляет:<br><br>
+            <span class="pill pill-blue">Фото тарелки</span>
+            <span class="pill pill-blue">Голосовую заметку</span>
+            <span class="pill pill-blue">Файл анализов</span>
+            <span class="pill pill-blue">Фото этикетки БАД</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">💻 Через веб / MacBook</div>
+          <div class="card-body">
+            Полностью поддерживается. Ввод через:<br><br>
+            <span class="pill pill-purple">Google Drive (папки)</span>
+            <span class="pill pill-purple">Email-пересылка</span>
+            <span class="pill pill-purple">Прямой upload</span><br><br>
+            <strong>Подойдёт клиенту, который предпочитает десктоп.</strong>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">👤 Ввод через ассистента</div>
+          <div class="card-body">
+            <strong>Да, это поддерживается.</strong> Клиент передаёт информацию (устно, фото, пересылает файлы) — ассистент загружает в систему. Каждый клиент получает свой изолированный профиль.<br><br>
+            Это именно та модель, которая работает в вашей бутиковой программе.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔄 Автоматический ввод</div>
+          <div class="card-body">
+            Данные трекеров (Apple Watch, Oura, Whoop) подтягиваются <strong>автоматически каждый день</strong> — клиент ничего не делает. Только разовая настройка в начале.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 3: Q2 — Генетика ─── -->
+  <div class="slide" id="slide-3">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 2</div>
+        <h2 class="q-title">Генетические тесты</h2>
+      </div>
+      <div class="big-answer">
+        Тест должен выдавать <strong>сырые данные (raw data)</strong> — файл с вашими SNP. Это не то красивое окно с "инсайтами", а сам файл данных. WGS (~20 GB) даёт максимум точности, но и 23andMe (20-30 MB) работает.
+      </div>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Сервис / Лаборатория</th>
+            <th>Тип</th>
+            <th>Raw data</th>
+            <th>Географии</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Nebula Genomics</strong></td>
+            <td><span class="pill pill-green">WGS (полный)</span></td>
+            <td><span class="pill pill-green">✓ Да</span></td>
+            <td>Международная доставка (РФ, КЗ, Дубай, Лондон)</td>
+          </tr>
+          <tr>
+            <td><strong>Dante Labs</strong></td>
+            <td><span class="pill pill-green">WGS (полный)</span></td>
+            <td><span class="pill pill-green">✓ Да</span></td>
+            <td>Международная доставка</td>
+          </tr>
+          <tr>
+            <td><strong>Atlas Biomed</strong></td>
+            <td><span class="pill pill-blue">Чип (microarray)</span></td>
+            <td><span class="pill pill-green">✓ Да</span></td>
+            <td><strong>Россия / СНГ</strong> — лаборатория в Москве</td>
+          </tr>
+          <tr>
+            <td><strong>23andMe</strong></td>
+            <td><span class="pill pill-blue">Чип (microarray)</span></td>
+            <td><span class="pill pill-green">✓ Да</span></td>
+            <td>Международная, но <em>доставка в РФ ограничена</em></td>
+          </tr>
+          <tr>
+            <td><strong>Геном Центр (РФ)</strong></td>
+            <td><span class="pill pill-orange">Уточнить</span></td>
+            <td><span class="pill pill-orange">Уточнить</span></td>
+            <td>Россия — проверить перед заказом</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="disclaimer">⚠ Главное требование одно: лаборатория должна отдать <strong>файл сырых данных</strong>. Если они предлагают только свой интерфейс — не подходит. Можно сделать отдельный ресёрч по странам под ваших клиентов.</div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 4: Q3 — Трекеры ─── -->
+  <div class="slide" id="slide-4">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 3</div>
+        <h2 class="q-title">Совместимые трекеры</h2>
+      </div>
+      <div class="answer-grid cols-3">
+        <div class="card">
+          <div class="card-icon">⭕</div>
+          <div class="card-title">Oura Ring</div>
+          <div class="card-body">
+            <span class="pill pill-green">Рекомендован</span><br><br>
+            HRV (RMSSD), стадии сна, температура, готовность (Readiness). <strong>Лучший трекер сна.</strong> API v2 — автоматическое ежедневное подтягивание.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⌚</div>
+          <div class="card-title">Apple Watch</div>
+          <div class="card-body">
+            <span class="pill pill-green">Поддерживается</span><br><br>
+            VO2 max, ЧСС, HRV (SDNN), шаги, калории, SpO2. Экспорт через Health App XML или iOS Shortcuts.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💪</div>
+          <div class="card-title">Whoop</div>
+          <div class="card-body">
+            <span class="pill pill-blue">Поддерживается</span><br><br>
+            Нагрузка (Strain), восстановление, Zone 2 минуты, HRV. Экспорт CSV из приложения.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏃</div>
+          <div class="card-title">Garmin</div>
+          <div class="card-body">
+            <span class="pill pill-blue">Поддерживается</span><br><br>
+            VO2 max, ЧСС-зоны, стресс, сон. Экспорт через Garmin Connect API или CSV.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Fitbit / Samsung</div>
+          <div class="card-body">
+            <span class="pill pill-orange">Базовая поддержка</span><br><br>
+            Сон, ЧСС, шаги. Меньше данных по HRV. CSV-экспорт работает.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📁</div>
+          <div class="card-title">Любой трекер</div>
+          <div class="card-body">
+            <span class="pill pill-purple">Через CSV / JSON</span><br><br>
+            Если трекер даёт экспорт в CSV или JSON — интегрируется. <strong>Нет трекера → ручной ввод тоже работает.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 5: Q4 — HRV ─── -->
+  <div class="slide" id="slide-5">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 4</div>
+        <h2 class="q-title">Работа с низким HRV</h2>
+      </div>
+      <div class="yes-badge"><div class="yes-dot"></div><span class="yes-text">Да — система формирует конкретные рекомендации по тренировкам</span></div>
+      <div class="two-col">
+        <div>
+          <div class="big-answer" style="font-size:0.9rem;">
+            Если HRV ниже персонального базового уровня (тренд 7+ дней), система меняет рекомендации:
+          </div>
+          <ul class="check-list">
+            <li><strong>Тип нагрузки:</strong> переход на Zone 2 (пульс 105–125 уд/мин, можно разговаривать). Силовые и HIIT — не рекомендованы.</li>
+            <li><strong>Интенсивность:</strong> снижается автоматически. Восстановительные тренировки в приоритете.</li>
+            <li><strong>Пульсовые зоны:</strong> пересчитываются под 60–70% от максимального ЧСС клиента.</li>
+            <li><strong>Частота тренировок:</strong> рекомендует добавить день отдыха или активного восстановления (ходьба, стретчинг).</li>
+            <li><strong>Причина объясняется:</strong> «HRV снизился на 12% за 7 дней — вероятная причина: стресс / перетренировка / сон <7ч».</li>
+          </ul>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🔴 HRV &lt; базового на 15%+</div>
+            <div class="card-body">
+              Полный день отдыха или лёгкая прогулка. Никакой высокой интенсивности. Приоритет — сон и питание.
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">🟡 HRV на 5–15% ниже</div>
+            <div class="card-body">
+              Zone 2 (не выше). Цель — укрепить HRV без дополнительной нагрузки на ВНС.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🟢 HRV в норме / выше</div>
+            <div class="card-body">
+              Можно давать любую нагрузку по плану. Система рекомендует оптимальное окно по погоде + календарю.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 6: Q5 — Сон ─── -->
+  <div class="slide" id="slide-6">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 5</div>
+        <h2 class="q-title">Адаптация тренировок под сон</h2>
+      </div>
+      <div class="yes-badge"><div class="yes-dot"></div><span class="yes-text">Да — автоматически, на основе данных трекера</span></div>
+      <div class="big-answer">
+        Если трекер зафиксировал плохой сон (низкая эффективность, мало глубокого сна, короткая продолжительность) — система перестраивает рекомендацию по тренировке <strong>до начала дня, в утреннем брифе.</strong>
+      </div>
+      <table class="info-table">
+        <thead>
+          <tr><th>Показатель сна</th><th>Значение</th><th>Что меняется</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Эффективность сна</td>
+            <td><span class="pill pill-red">&lt; 75%</span></td>
+            <td>Снизить интенсивность, перенести силовую на следующий день</td>
+          </tr>
+          <tr>
+            <td>Глубокий сон</td>
+            <td><span class="pill pill-orange">&lt; 15% от общего</span></td>
+            <td>Приоритет восстановления. Zone 2 вместо Zone 3–4.</td>
+          </tr>
+          <tr>
+            <td>Продолжительность</td>
+            <td><span class="pill pill-red">&lt; 6 часов</span></td>
+            <td>Красный флаг. Только восстановительная ходьба. Без нагрузки.</td>
+          </tr>
+          <tr>
+            <td>Readiness Score (Oura)</td>
+            <td><span class="pill pill-orange">&lt; 60</span></td>
+            <td>Тренировка переносится или заменяется стретчингом / прогулкой</td>
+          </tr>
+          <tr>
+            <td>Все показатели хорошие</td>
+            <td><span class="pill pill-green">✓ норма</span></td>
+            <td>Тренировка по плану. Система рекомендует оптимальное время и тип.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="disclaimer">Адаптация работает <strong>комбинированно</strong>: сон + HRV + нагрузка за предыдущие дни + расписание из Google Calendar. Это не один параметр — это перекрёстный анализ.</div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 7: Q6 — Метрики ─── -->
+  <div class="slide" id="slide-7">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 6</div>
+        <h2 class="q-title">Метрики прогресса клиента</h2>
+      </div>
+      <div class="metrics-row">
+        <div class="metric-box">
+          <div class="metric-value" style="font-size:clamp(1.4rem,2.5vw,2rem)">HRV</div>
+          <div class="metric-label">Тренд 30 дней</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" style="font-size:clamp(1.4rem,2.5vw,2rem)">VO₂max</div>
+          <div class="metric-label">Кардио-фитнес</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" style="font-size:clamp(1.2rem,2vw,1.7rem)">Биовозраст</div>
+          <div class="metric-label">vs хронологический</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" style="font-size:clamp(1.4rem,2.5vw,2rem)">ЧСС</div>
+          <div class="metric-label">В покое (тренд)</div>
+        </div>
+      </div>
+      <div class="answer-grid cols-2">
+        <div class="card">
+          <div class="card-title">😴 Качество сна</div>
+          <div class="card-body">
+            Глубокий сон (% от общего), эффективность, время засыпания, тренд за 30 дней. <strong>Видно в динамике — не только вчерашнюю ночь.</strong>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🧠 Стресс / восстановление</div>
+          <div class="card-body">
+            HRV-тренд, корреляция с дневниковыми записями. <strong>Система находит паттерны:</strong> какие события снижают HRV, что ускоряет восстановление.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏃 Zone 2 минуты / неделя</div>
+          <div class="card-body">
+            Цель: 150–180 мин/нед аэробной нагрузки. Трекается автоматически. <strong>Главный показатель для VO₂ max и снижения воспаления.</strong>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🧬 Биомаркеры крови</div>
+          <div class="card-body">
+            Тренды по ключевым маркерам (липиды, глюкоза, воспаление, гормоны). Пример: <strong>холестерин −17% за 3 месяца</strong> — без медикаментов, только диета.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 8: Q7 — Медицинские рекомендации ─── -->
+  <div class="slide" id="slide-8">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="q-header">
+        <div class="q-number">Вопрос 7</div>
+        <h2 class="q-title">Медицинские рекомендации и фармакология</h2>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="yes-badge" style="margin-bottom:16px;"><div class="yes-dot"></div><span class="yes-text">Да — рекомендации есть. Они двух типов.</span></div>
+          <div class="card" style="margin-bottom:10px;">
+            <div class="card-title">📌 Статические (на основе генетики)</div>
+            <div class="card-body">
+              <strong>Не меняются со временем.</strong> Пример из реальных данных:<br><br>
+              — Варфарин <span class="pill pill-red">❌ нельзя</span> — генетическая гиперчувствительность<br>
+              — Симвастатин <span class="pill pill-red">❌ нельзя</span> — риск миопатии<br>
+              — Омега-3 <span class="pill pill-orange">не нужно</span> при APOE E3/E4<br>
+              — Железо <span class="pill pill-green">+ с витамином C и D</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">🔄 Динамические (по биомаркерам)</div>
+            <div class="card-body">
+              <strong>Меняются при изменении анализов.</strong><br><br>
+              Например: если триглицериды растут → корректируется рекомендация по жирам. Если воспалительные маркеры повышены → приоритет противовоспалительных протоколов.
+            </div>
+          </div>
+        </div>
+        <div>
+          <ul class="check-list" style="margin-bottom:16px;">
+            <li><strong>Противопоказания:</strong> проверяются через PharmCat (164 основных препарата) + агент-биостатистик.</li>
+            <li><strong>Лекарственные взаимодействия:</strong> да, перекрёстная проверка между всем, что принимает клиент.</li>
+            <li><strong>Клиническая валидность:</strong> каждая рекомендация подкреплена ссылкой на PubMed (Grade A или B статьи). Без ссылки — флаг сомнения.</li>
+            <li><strong>НЕ заменяет врача.</strong> Это инструмент подготовки для врача или wellness-специалиста — вы получаете черновик с данными и ссылками, а не готовый диагноз.</li>
+          </ul>
+          <div class="disclaimer">
+            ⚠ Рекомендации носят <strong>информационный характер</strong> и предназначены для использования специалистом (как вы), а не напрямую пациентом. Это ваш инструмент — не замена вашей экспертизы.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SLIDE 9: СЛЕДУЮЩИЙ ШАГ ─── -->
+  <div class="slide" id="slide-9">
+    <div class="bg-grid"></div>
+    <div class="glow" style="width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,247,0.08) 0%,transparent 70%);top:-200px;left:-100px;"></div>
+    <div class="content">
+      <div class="tag">Следующий шаг</div>
+      <h2 class="title-main" style="font-size:clamp(1.8rem,4vw,3.2rem);">Как запустить пилот</h2>
+      <div class="divider"></div>
+      <div class="final-grid">
+        <div class="final-card">
+          <div class="final-card-num">01</div>
+          <div class="final-card-title">Пилот с 1–2 клиентами</div>
+          <div class="final-card-desc">Берёте двух клиентов из текущей программы. Настраиваем систему под них. 2 недели → смотрим результат.</div>
+        </div>
+        <div class="final-card">
+          <div class="final-card-num">02</div>
+          <div class="final-card-title">White-label под вас</div>
+          <div class="final-card-desc">Система работает от вашего имени. Черновики — вам. Клиент видит вашу экспертизу, а не инструмент за ней.</div>
+        </div>
+        <div class="final-card">
+          <div class="final-card-num">03</div>
+          <div class="final-card-title">One-time setup</div>
+          <div class="final-card-desc">Как обсуждали — не подписка, а разовый проект с настройкой + lifetime license. Обновления — по договорённости.</div>
+        </div>
+        <div class="final-card">
+          <div class="final-card-num">04</div>
+          <div class="final-card-title">Контакт</div>
+          <div class="final-card-desc">Telegram: <strong>@BKproduct</strong><br>WhatsApp: по запросу<br>boris.korol@ai-automation.studio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /presentation -->
+
+<!-- ─── NAVIGATION ─── -->
+<div class="nav-dots" id="navDots"></div>
+<div class="slide-counter" id="slideCounter">1 / 9</div>
+<div class="progress-bar" id="progressBar"></div>
+<div class="nav-arrows">
+  <button class="arrow-btn" id="prevBtn" onclick="changeSlide(-1)">←</button>
+  <button class="arrow-btn" id="nextBtn" onclick="changeSlide(1)">→</button>
+</div>
+
+<script>
+const TOTAL = 9;
+let current = 1;
+
+function showSlide(n) {
+  const prev = document.getElementById('slide-' + current);
+  if (prev) { prev.classList.remove('active'); prev.classList.add('exit'); setTimeout(() => prev.classList.remove('exit'), 500); }
+  current = Math.max(1, Math.min(TOTAL, n));
+  const next = document.getElementById('slide-' + current);
+  if (next) next.classList.add('active');
+  updateUI();
+}
+
+function changeSlide(dir) { showSlide(current + dir); }
+
+function updateUI() {
+  document.getElementById('slideCounter').textContent = current + ' / ' + TOTAL;
+  document.getElementById('progressBar').style.width = ((current / TOTAL) * 100) + '%';
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i + 1 === current));
+  document.getElementById('prevBtn').style.opacity = current === 1 ? '0.3' : '1';
+  document.getElementById('nextBtn').style.opacity = current === TOTAL ? '0.3' : '1';
+}
+
+// Build dots
+const dotsEl = document.getElementById('navDots');
+for (let i = 1; i <= TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 1 ? ' active' : '');
+  d.onclick = () => showSlide(i);
+  dotsEl.appendChild(d);
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); changeSlide(-1); }
+  if (e.key === 'Home') showSlide(1);
+  if (e.key === 'End') showSlide(TOTAL);
+});
+
+// Touch swipe
+let ts = 0, tx = 0;
+document.addEventListener('touchstart', e => { ts = e.touches[0].clientX; tx = e.touches[0].clientY; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - ts;
+  const dy = e.changedTouches[0].clientY - tx;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) changeSlide(dx < 0 ? 1 : -1);
+});
+
+updateUI();
+</script>
+</body>
+</html>
