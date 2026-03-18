@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture Curious × Sotheby's — CRM Enrichment Proposal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #faf9f7;
+  --surface:  #f2f0ec;
+  --border:   #e0dbd2;
+  --ink:      #1a1714;
+  --muted:    #8a8078;
+  --gold:     #9a7b4f;
+  --gold-lt:  #c4a572;
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'Inter', -apple-system, sans-serif;
+  --mono:     'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PAGE ── */
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 88px) clamp(28px, 6vw, 64px);
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: clamp(56px, 9vw, 88px);
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.brand-cc {
+  font-family: var(--serif);
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.brand-cc span {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 5px;
+  font-style: normal;
+}
+
+.collab-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.collab-badge::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── HERO ── */
+.hero {
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(32px, 6vw, 54px);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 24px;
+  letter-spacing: 0.01em;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-lead {
+  font-size: clamp(14px, 2vw, 16px);
+  line-height: 1.75;
+  color: var(--muted);
+  max-width: 580px;
+}
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── PREMISE BOX ── */
+.premise {
+  background: var(--ink);
+  color: #f4f0eb;
+  padding: clamp(28px, 4vw, 40px) clamp(24px, 4vw, 40px);
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.premise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px 40px;
+  margin-top: 28px;
+}
+
+.premise-item {}
+
+.premise-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.premise-text {
+  font-size: 13px;
+  color: #c8c0b8;
+  line-height: 1.65;
+}
+
+.premise-text strong {
+  color: #f4f0eb;
+  font-weight: 400;
+}
+
+/* ── CLIENT JOURNEY ── */
+.journey {
+  position: relative;
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.journey-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 24px;
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.step-num {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  background: var(--bg);
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.step-line {
+  flex: 1;
+  width: 1px;
+  background: var(--border);
+  margin-top: 6px;
+}
+
+.step:last-child .step-line {
+  display: none;
+}
+
+.step-right {
+  padding-top: 6px;
+}
+
+.step-title {
+  font-family: var(--serif);
+  font-size: clamp(16px, 2.5vw, 20px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.step-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.step-tag {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  border: 1px solid #e0d8cc;
+  padding: 3px 8px;
+}
+
+/* ── VALUE SPLIT ── */
+.value-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.value-col {
+  background: var(--bg);
+  padding: clamp(24px, 3.5vw, 36px);
+}
+
+.value-col-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.value-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.value-list li {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.value-list li::before {
+  content: '—';
+  color: var(--gold-lt);
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  margin-top: 1px;
+}
+
+.value-list li strong {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+/* ── EXAMPLE SCENARIO ── */
+.scenario {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  padding: clamp(24px, 3.5vw, 36px);
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.scenario-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.scenario-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.scenario-node {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.scenario-arrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.scenario-note {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-style: italic;
+  font-family: var(--serif);
+}
+
+/* ── WHAT CC IS NOT ── */
+.clarify {
+  border: 1px solid var(--border);
+  padding: clamp(24px, 3.5vw, 36px);
+  margin-bottom: clamp(56px, 9vw, 88px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.clarify-col label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.clarify-col.no label { color: #b0a090; }
+.clarify-col.yes label { color: var(--gold); }
+
+.clarify-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.clarify-col ul li {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  display: flex;
+  gap: 10px;
+}
+
+.clarify-col.no ul li::before { content: '✕'; color: #c8b8a0; font-size: 10px; margin-top: 2px; }
+.clarify-col.yes ul li::before { content: '✓'; color: var(--gold); font-size: 10px; margin-top: 2px; }
+
+/* ── MECHANICS ── */
+.mechanics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: clamp(56px, 9vw, 88px);
+}
+
+.mechanic-card {
+  border: 1px solid var(--border);
+  padding: 24px 22px;
+}
+
+.mechanic-icon {
+  font-size: 18px;
+  margin-bottom: 14px;
+  opacity: 0.7;
+}
+
+.mechanic-title {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.mechanic-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── FOOTER / CTA ── */
+.cta-section {
+  border-top: 1px solid var(--border);
+  padding-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.cta-copy h2 {
+  font-family: var(--serif);
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.cta-copy p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.cta-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: right;
+}
+
+.contact-item label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.contact-item span {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.footer-line {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-brand {
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.footer-meta {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: #c8c0b8;
+  text-transform: uppercase;
+}
+
+/* ── FADE IN ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page > * {
+  animation: fadeUp 0.6s ease both;
+}
+.header      { animation-delay: 0.00s; }
+.hero        { animation-delay: 0.10s; }
+.premise     { animation-delay: 0.18s; }
+.section     { animation-delay: 0.24s; }
+.value-split { animation-delay: 0.30s; }
+.scenario    { animation-delay: 0.34s; }
+.clarify     { animation-delay: 0.38s; }
+.mechanics   { animation-delay: 0.42s; }
+.cta-section { animation-delay: 0.48s; }
+.footer-line { animation-delay: 0.52s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .value-split { grid-template-columns: 1fr; }
+  .clarify     { grid-template-columns: 1fr; }
+  .cta-section { grid-template-columns: 1fr; }
+  .cta-contacts { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="brand-cc">
+      Culture Curious
+      <span>Cultural Intelligence Platform</span>
+    </div>
+    <div class="collab-badge">For Sotheby's Marketing &middot; March 2026</div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow">Proposal</div>
+    <h1>Enrich your collector<br>profiles with <em>cultural data</em> —<br>without asking a single question.</h1>
+    <p class="hero-lead">
+      Culture Curious is a white-label cultural intelligence layer that sits alongside
+      your Preferred programme. Collectors use it to plan their cultural season.
+      Sotheby's gains a real-time map of where their clients are, what they care about,
+      and when to activate.
+    </p>
+  </section>
+
+  <!-- PREMISE -->
+  <div class="premise">
+    <div class="section-label" style="color:#888; margin-bottom:8px;">
+      <span style="font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;">The Starting Point</span>
+    </div>
+    <div class="premise-grid">
+      <div class="premise-item">
+        <div class="premise-label">What Sotheby's already has</div>
+        <div class="premise-text">
+          A <strong>Preferred programme</strong> — a curated club of collectors who receive
+          exclusive access to studios, museum tours, private previews. A relationship asset
+          built over decades.
+        </div>
+      </div>
+      <div class="premise-item">
+        <div class="premise-label">The gap today</div>
+        <div class="premise-text">
+          Collector profiles capture <strong>what they buy</strong> — not what they love.
+          Who is going to Vienna Philharmonic next month?
+          Who will be in Paris for the opera season? That data doesn't exist yet.
+        </div>
+      </div>
+      <div class="premise-item">
+        <div class="premise-label">What becomes possible</div>
+        <div class="premise-text">
+          When you know a collector is attending <strong>Netrebko at ROH on Friday</strong>,
+          you can place a Sotheby's dinner in their calendar for Thursday evening —
+          elegantly, without cold outreach.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT JOURNEY -->
+  <section class="section">
+    <div class="section-label">How It Works — The Client Journey</div>
+    <div class="journey-steps">
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">01</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-right">
+          <div class="step-title">Collector opts in via Preferred+</div>
+          <div class="step-desc">
+            A white-label cultural profile form — branded as Sotheby's — is sent to
+            Preferred members. They input favourite performers, composers, venues,
+            and cultural cities. Feels like a luxury benefit, not a survey.
+          </div>
+          <span class="step-tag">Sotheby's branded</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">02</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-right">
+          <div class="step-title">App surfaces their season — across all cities</div>
+          <div class="step-desc">
+            Culture Curious syncs the global cultural calendar and shows each collector
+            their relevant events: opera in Vienna, ballet in Paris, piano recital in Amsterdam —
+            all in one place. The collector books what interests them.
+          </div>
+          <span class="step-tag">Value to the collector</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">03</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-right">
+          <div class="step-title">Sotheby's dashboard sees the cultural map</div>
+          <div class="step-desc">
+            The Preferred programme dashboard gets a live view: which collectors are
+            going where, when, and what they care about. Cultural preference enriches
+            every existing CRM record — silently, automatically.
+          </div>
+          <span class="step-tag">CRM enrichment</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">04</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-right">
+          <div class="step-title">Sotheby's activates around the moment</div>
+          <div class="step-desc">
+            A collector is attending a Tacita Dean–designed production at ROH →
+            Sotheby's places a private studio visit or collector dinner in the same week.
+            No cold outreach — the timing is already perfect.
+          </div>
+          <span class="step-tag">Intelligent activation</span>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num">05</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-right">
+          <div class="step-title">Relationship deepens — naturally</div>
+          <div class="step-desc">
+            The collector experiences Sotheby's as deeply attuned to their world.
+            Loyalty strengthens. Their +1s become new contacts in the Preferred pipeline.
+            The collection grows alongside the relationship.
+          </div>
+          <span class="step-tag">Loyalty + pipeline</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- VALUE SPLIT -->
+  <div class="value-split">
+    <div class="value-col">
+      <div class="value-col-label">Value to the Collector</div>
+      <ul class="value-list">
+        <li><strong>One place</strong> for their entire cultural season — London, Paris, Vienna, New York</li>
+        <li>Never miss a <strong>Grigory Sokolov</strong> recital in Rotterdam or a Prjljocaj ballet in The Hague</li>
+        <li>A benefit that feels curated, not commercial</li>
+        <li>Branded by Sotheby's — <strong>zero Culture Curious visibility</strong></li>
+      </ul>
+    </div>
+    <div class="value-col">
+      <div class="value-col-label">Value to Sotheby's</div>
+      <ul class="value-list">
+        <li>Know <strong>what collectors love</strong>, not just what they buy</li>
+        <li>Time pre-auction events and studio tours around <strong>when collectors are already travelling</strong></li>
+        <li>Deepen Preferred without adding headcount or operational cost</li>
+        <li>Generate new collector leads via <strong>natural +1 introductions</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SCENARIO -->
+  <div class="scenario">
+    <div class="scenario-label">Live Example</div>
+    <div class="scenario-flow">
+      <div class="scenario-node">Collector profile:<br><strong>loves Netrebko,<br>Paris &amp; London</strong></div>
+      <div class="scenario-arrow">→</div>
+      <div class="scenario-node">CC alerts:<br><strong>Netrebko at ROH,<br>Friday 14 Nov</strong></div>
+      <div class="scenario-arrow">→</div>
+      <div class="scenario-node">Sotheby's dashboard<br>sees <strong>12 Preferred<br>members attending</strong></div>
+      <div class="scenario-arrow">→</div>
+      <div class="scenario-node">Sotheby's places<br><strong>collector dinner<br>Thursday 13 Nov</strong></div>
+      <div class="scenario-arrow">→</div>
+      <div class="scenario-node"><strong>9 attend.</strong><br>2 bring guests.<br>1 new collection.</div>
+    </div>
+    <div class="scenario-note">
+      Previously: this required manually tracking who is attending what, across 20 separate venue websites.<br>
+      With Culture Curious: it surfaces automatically.
+    </div>
+  </div>
+
+  <!-- WHAT CC IS / IS NOT -->
+  <div class="clarify">
+    <div class="clarify-col no">
+      <label>This is not about</label>
+      <ul>
+        <li>Entertaining collectors as a side activity</li>
+        <li>Competing with your existing events programme</li>
+        <li>Sotheby's managing music or performance content</li>
+        <li>Another loyalty points system</li>
+      </ul>
+    </div>
+    <div class="clarify-col yes">
+      <label>This is about</label>
+      <ul>
+        <li>CRM enrichment — cultural data alongside purchase history</li>
+        <li>Activation intelligence — right moment, right city, right collector</li>
+        <li>White-label — entirely under the Sotheby's brand</li>
+        <li>Zero cost to collector, minimal integration effort</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MECHANICS -->
+  <div class="mechanics">
+    <div class="mechanic-card">
+      <div class="mechanic-icon">⚙</div>
+      <div class="mechanic-title">White-label</div>
+      <div class="mechanic-desc">Fully branded as Sotheby's Preferred+. Culture Curious is the engine — invisible to collectors and to the outside.</div>
+    </div>
+    <div class="mechanic-card">
+      <div class="mechanic-icon">◎</div>
+      <div class="mechanic-title">Free for collectors</div>
+      <div class="mechanic-desc">No subscription, no paywall. The access itself is the value — another reason to stay close to Sotheby's.</div>
+    </div>
+    <div class="mechanic-card">
+      <div class="mechanic-icon">◈</div>
+      <div class="mechanic-title">Data stays yours</div>
+      <div class="mechanic-desc">Collector profiles, contacts, and all relationship data belong to Sotheby's. We provide the cultural intelligence layer only.</div>
+    </div>
+    <div class="mechanic-card">
+      <div class="mechanic-icon">◇</div>
+      <div class="mechanic-title">Pilot-first</div>
+      <div class="mechanic-desc">We propose a 30-day pilot with a defined cohort of Preferred members — before any commercial conversation.</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-copy">
+      <h2>A 30-minute conversation<br>with your marketing team.</h2>
+      <p>
+        We can walk through the dashboard, show how enrichment works in practice,
+        and scope a pilot within your existing Preferred programme.
+        No technical overhead to get started.
+      </p>
+    </div>
+    <div class="cta-contacts">
+      <div class="contact-item">
+        <label>Telegram</label>
+        <span>@BKproduct</span>
+      </div>
+      <div class="contact-item">
+        <label>Email</label>
+        <span>boris.korol@culturecurious.world</span>
+      </div>
+      <div class="contact-item">
+        <label>Platform</label>
+        <span>culturecurious.world</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-line">
+    <span class="footer-brand">Culture Curious · London · 2026</span>
+    <span class="footer-meta">Confidential · For internal review</span>
+  </div>
+
+</div>
+</body>
+</html>
