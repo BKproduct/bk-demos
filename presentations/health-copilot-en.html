@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Copilot — Boris Korol</title>
+<style>
+:root {
+  --navy:  #0D1B3E;
+  --navy2: #111f48;
+  --card:  #142047;
+  --teal:  #0D9488;
+  --teal2: rgba(13,148,136,0.15);
+  --amber: #F59E0B;
+  --amber2:rgba(245,158,11,0.12);
+  --text:  #E2E8F0;
+  --muted: #94A3B8;
+  --dim:   #64748B;
+  --white: #fff;
+  --border:rgba(255,255,255,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;}
+
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--amber));width:0%;z-index:999;transition:width .1s;}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(13,27,62,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;gap:24px;height:48px;overflow-x:auto;}
+nav a{color:var(--dim);text-decoration:none;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;transition:color .2s;}
+nav a:hover,nav a.active{color:var(--teal);}
+.nav-logo{color:var(--white)!important;font-weight:800;margin-right:auto;}
+
+.wrap{max-width:900px;margin:0 auto;padding:0 5%;}
+section{padding:72px 0;border-bottom:1px solid var(--border);}
+section:last-child{border-bottom:none;}
+
+.label{display:inline-flex;align-items:center;gap:7px;color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+.label::before{content:'';display:block;width:18px;height:2px;background:var(--teal);border-radius:2px;}
+h2{font-size:clamp(24px,3.8vw,36px);font-weight:800;color:var(--white);line-height:1.15;margin-bottom:10px;}
+h2 span{color:var(--teal);}
+.subtitle{color:var(--muted);font-size:16px;max-width:640px;margin-bottom:36px;line-height:1.55;}
+
+/* grade badge */
+.gb{display:inline-block;background:var(--teal2);border:1px solid var(--teal);color:var(--teal);font-size:9px;font-weight:800;letter-spacing:.08em;padding:1px 5px;border-radius:3px;vertical-align:middle;margin-left:3px;}
+.gb.b{background:rgba(245,158,11,.12);border-color:var(--amber);color:var(--amber);}
+
+/* ── HERO ── */
+#hero{padding:96px 0 72px;position:relative;overflow:hidden;}
+.hero-cross{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:.05;}
+.hero-cross .h{position:absolute;background:var(--teal);width:520px;height:44px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:3px;}
+.hero-cross .v{position:absolute;background:var(--teal);width:44px;height:440px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:3px;}
+.hero-tag{display:inline-block;background:var(--teal2);border:1px solid var(--teal);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:24px;}
+.hero-title{font-size:clamp(38px,7vw,66px);font-weight:900;color:var(--white);line-height:1.05;letter-spacing:-.02em;margin-bottom:18px;}
+.hero-title span{color:var(--teal);}
+.hero-tagline{color:var(--amber);font-size:17px;font-weight:600;margin-bottom:16px;letter-spacing:.02em;}
+.hero-sub{color:var(--muted);font-size:16px;max-width:560px;line-height:1.6;margin-bottom:36px;}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:36px;}
+.pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.11);color:var(--text);font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;}
+.audience-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:40px;}
+.aud-card{background:var(--card);border-radius:7px;padding:16px 18px;border-left:3px solid var(--teal);}
+.aud-card.amber{border-left-color:var(--amber);}
+.aud-card.dim{border-left-color:var(--dim);}
+.aud-title{color:var(--white);font-size:13px;font-weight:700;margin-bottom:4px;}
+.aud-body{color:var(--muted);font-size:12px;line-height:1.45;}
+.hero-footer{color:var(--dim);font-size:12px;padding-top:28px;border-top:1px solid var(--border);}
+
+/* ── PROBLEM ── */
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+.prob-card{background:var(--card);border-radius:8px;padding:24px;border-top:3px solid transparent;}
+.prob-card.red{border-top-color:#EF4444;}
+.prob-card.amber{border-top-color:var(--amber);}
+.prob-card.teal{border-top-color:var(--teal);}
+.prob-card .icon{font-size:22px;margin-bottom:10px;}
+.prob-card h4{color:var(--white);font-size:14px;font-weight:700;margin-bottom:7px;}
+.prob-card p{color:var(--muted);font-size:13px;line-height:1.55;}
+.prob-card p strong{color:var(--text);}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stat{background:var(--card);border-left:3px solid var(--amber);border-radius:6px;padding:16px 18px;}
+.stat-n{color:var(--amber);font-size:22px;font-weight:800;line-height:1;margin-bottom:5px;}
+.stat-l{color:var(--muted);font-size:12px;line-height:1.4;}
+
+/* ── MARKET VALIDATION ── */
+.market-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:0;}
+.market-card{background:var(--card);border-radius:7px;padding:20px 22px;}
+.mc-label{color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
+.mc-stat{color:var(--white);font-size:22px;font-weight:800;margin-bottom:5px;}
+.mc-body{color:var(--muted);font-size:13px;line-height:1.5;}
+.market-key{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.3);border-radius:7px;padding:20px 24px;margin-top:16px;}
+.mk-title{color:var(--teal);font-size:13px;font-weight:700;margin-bottom:10px;}
+.mk-body{color:var(--text);font-size:14px;line-height:1.55;font-style:italic;}
+.verticals{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+.vtag{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);color:var(--amber);font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;}
+
+/* ── ARCHITECTURE ── */
+.arch-flow{display:flex;align-items:center;gap:0;}
+.arch-col{display:flex;flex-direction:column;gap:10px;flex:1;}
+.arch-item{background:var(--card);border-radius:6px;padding:13px 15px;border-left:3px solid var(--teal);}
+.arch-item.out{border-left-color:var(--amber);}
+.arch-item .al{color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px;}
+.arch-item.out .al{color:var(--amber);}
+.arch-item .ad{color:var(--muted);font-size:12px;line-height:1.4;}
+.arch-arrow{display:flex;align-items:center;justify-content:center;padding:0 14px;flex-shrink:0;font-size:20px;}
+.arch-core{flex-shrink:0;width:290px;background:rgba(13,148,136,.09);border:2px solid rgba(13,148,136,.4);border-radius:10px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:11px;align-self:center;}
+.arch-core .act{color:var(--teal);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;}
+.arch-core .atitle{color:var(--white);font-size:15px;font-weight:700;line-height:1.25;}
+.arch-core .asub{color:var(--muted);font-size:11px;line-height:1.4;}
+.agents-mini{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;margin-top:3px;}
+.am{background:var(--card);border-radius:4px;padding:10px 6px;text-align:center;border-top:2px solid var(--teal);}
+.am:last-child{border-top-color:var(--amber);}
+.am .aml{color:var(--teal);font-size:9.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;}
+.am:last-child .aml{color:var(--amber);}
+.am .amd{color:var(--muted);font-size:9.5px;margin-top:3px;line-height:1.3;}
+
+/* ── GENETICS ── */
+.pipeline-row{display:flex;align-items:center;background:var(--card);border-radius:8px;padding:16px 20px;margin-bottom:24px;overflow-x:auto;gap:0;}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;flex-shrink:0;min-width:82px;}
+.step-n{color:var(--teal);font-size:11px;font-weight:800;width:27px;height:27px;border-radius:50%;border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;margin-bottom:5px;}
+.step:last-child .step-n{border-color:var(--amber);color:var(--amber);}
+.step-t{color:var(--text);font-size:10px;line-height:1.3;}
+.step-arr{color:var(--teal);font-size:16px;padding:0 3px;flex-shrink:0;margin-top:-14px;}
+.agents-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.agent-card{background:var(--card);border-radius:8px;padding:20px;border-top:3px solid var(--teal);}
+.agent-card.amber-t{border-top-color:var(--amber);}
+.agent-card .ah{color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.agent-card.amber-t .ah{color:var(--amber);}
+.agent-card h4{color:var(--white);font-size:13px;font-weight:700;margin-bottom:9px;}
+.agent-card ul{list-style:none;}
+.agent-card ul li{color:var(--muted);font-size:12px;line-height:1.5;padding-left:12px;position:relative;margin-bottom:2px;}
+.agent-card ul li::before{content:'·';position:absolute;left:0;color:var(--teal);}
+.agent-card.amber-t ul li::before{color:var(--amber);}
+
+/* ── DAILY INTEL ── */
+.intel-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+.briefing-box{background:var(--card);border-radius:8px;padding:24px;border:1px solid rgba(13,148,136,.2);font-family:'Courier New',monospace;}
+.bb-hdr{color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding-bottom:12px;border-bottom:1px solid rgba(13,148,136,.2);margin-bottom:14px;}
+.bb-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.bb-row:last-of-type{border-bottom:none;}
+.bbk{color:var(--muted);font-size:12px;}
+.bbv{font-size:12px;font-weight:700;}
+.bbv.g{color:#4ADE80;}.bbv.a{color:var(--amber);}.bbv.t{color:var(--teal);}
+.bb-rec{background:rgba(13,148,136,.1);border-left:2px solid var(--teal);padding:10px 13px;margin-top:14px;border-radius:3px;color:var(--text);font-size:12px;line-height:1.55;font-family:inherit;}
+.intel-features{display:flex;flex-direction:column;gap:14px;}
+.feature{background:var(--card);border-left:3px solid var(--teal);border-radius:6px;padding:16px 18px;}
+.feature.a{border-left-color:var(--amber);}
+.feature h4{color:var(--white);font-size:14px;font-weight:700;margin-bottom:5px;}
+.feature p{color:var(--muted);font-size:13px;line-height:1.5;}
+
+/* ── RESULTS ── */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.results-col h3{color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid rgba(13,148,136,.25);margin-bottom:16px;}
+.result-card{background:var(--card);border-radius:7px;padding:18px 20px;margin-bottom:12px;}
+.result-card:last-child{margin-bottom:0;}
+.rc-gene{color:var(--amber);font-size:12px;font-weight:700;font-family:monospace;margin-bottom:3px;}
+.rc-name{color:var(--white);font-size:14px;font-weight:700;margin-bottom:6px;}
+.rc-body{color:var(--muted);font-size:12px;line-height:1.5;margin-bottom:8px;}
+.rc-action{background:rgba(13,148,136,.12);border-left:2px solid var(--teal);padding:7px 11px;border-radius:3px;color:var(--text);font-size:12px;}
+.metric-card{background:var(--card);border-radius:7px;padding:18px 20px;margin-bottom:12px;}
+.metric-card:last-child{margin-bottom:0;}
+.metric-n{color:var(--teal);font-size:30px;font-weight:800;line-height:1;}
+.metric-l{color:var(--muted);font-size:12px;margin:3px 0 8px;}
+.metric-d{color:var(--text);font-size:12px;line-height:1.5;}
+
+/* ── Q&A ── */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.qa-card{background:var(--card);border-radius:7px;padding:20px;}
+.q{color:var(--amber);font-size:13px;font-weight:700;line-height:1.4;margin-bottom:8px;}
+.q::before{content:'Q  ';font-family:monospace;}
+.a{color:var(--text);font-size:13px;line-height:1.5;}
+.a::before{content:'A  ';color:var(--teal);font-family:monospace;font-weight:700;}
+
+/* ── CLINICIANS ── */
+.clin-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.stakeholder-tabs{display:flex;gap:10px;margin-bottom:20px;}
+.st{background:var(--card);border-radius:6px;padding:10px 16px;cursor:pointer;border:1px solid transparent;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.st.active{border-color:var(--teal);color:var(--teal);}
+.clin-cards{display:flex;flex-direction:column;gap:14px;}
+.clin-card{background:var(--card);border-radius:7px;padding:20px;display:flex;gap:16px;}
+.clin-num{color:var(--teal);font-size:26px;font-weight:800;line-height:1;flex-shrink:0;}
+.clin-body h4{color:var(--white);font-size:14px;font-weight:700;margin-bottom:5px;}
+.clin-body p{color:var(--muted);font-size:13px;line-height:1.5;}
+.womens-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:7px;padding:18px 20px;margin-top:14px;}
+.wb-title{color:var(--amber);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+.wb-body{color:var(--text);font-size:13px;line-height:1.5;}
+.outcomes-box{background:rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.3);border-radius:8px;padding:24px;}
+.outcomes-box h4{color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;}
+.outcome-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.outcome-item:last-child{border-bottom:none;}
+.od{width:7px;height:7px;background:var(--teal);border-radius:50%;flex-shrink:0;margin-top:6px;}
+.ot{color:var(--text);font-size:13px;line-height:1.45;}
+.quote-box{background:var(--card);border-left:3px solid var(--amber);border-radius:6px;padding:20px 22px;margin-top:14px;}
+.quote-text{color:var(--text);font-size:14px;font-style:italic;line-height:1.55;}
+.quote-attr{color:var(--amber);font-size:12px;margin-top:8px;}
+
+/* ── GTM ── */
+.gtm-grid{display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;}
+.timeline{display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:18px;}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;}
+.tl-circle{width:12px;height:12px;background:var(--teal);border-radius:50%;flex-shrink:0;margin-top:4px;}
+.tl-line{width:2px;flex:1;background:rgba(13,148,136,.2);margin:4px 0;min-height:24px;}
+.tl-item:last-child .tl-line{display:none;}
+.tl-content{padding-bottom:28px;}
+.tl-phase{color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;}
+.tl-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:5px;}
+.tl-body{color:var(--muted);font-size:13px;line-height:1.5;}
+.geo-row{display:flex;gap:10px;margin-top:20px;}
+.geo{flex:1;background:var(--card);border-radius:6px;padding:14px 16px;}
+.geo h5{color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+.geo p{color:var(--muted);font-size:12px;line-height:1.4;}
+.contact-card{background:var(--card);border:1px solid rgba(13,148,136,.3);border-radius:10px;padding:28px;}
+.cc-label{color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;}
+.cc-pilot{background:var(--teal2);border-radius:7px;padding:18px;margin-bottom:18px;}
+.cc-price{color:var(--amber);font-size:36px;font-weight:900;line-height:1;}
+.cc-period{color:var(--muted);font-size:13px;margin:3px 0 12px;}
+.cc-includes{color:var(--text);font-size:13px;line-height:1.7;}
+.cc-handle{color:var(--teal);font-size:22px;font-weight:800;margin-bottom:4px;}
+.cc-email{color:var(--dim);font-size:12px;}
+.cta-strip{background:var(--amber2);border:1px solid rgba(245,158,11,.3);border-radius:7px;padding:18px 20px;margin-top:16px;text-align:center;}
+.cta-strip p{color:var(--text);font-size:13px;line-height:1.55;}
+.cta-strip strong{color:var(--amber);font-size:15px;display:block;margin-top:6px;}
+
+footer{background:var(--navy2);padding:28px 5%;text-align:center;color:var(--dim);font-size:12px;border-top:1px solid var(--border);}
+
+@media(max-width:700px){
+  .prob-grid,.audience-row,.agents-grid,.intel-grid,.results-grid,.qa-grid,.clin-grid,.gtm-grid,.market-grid{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .arch-flow{flex-direction:column;}
+  .arch-arrow{transform:rotate(90deg);padding:8px 0;}
+  .arch-core{width:100%;max-width:360px;align-self:center;}
+  .arch-col{width:100%;}
+  .geo-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<nav>
+  <a href="#hero" class="nav-logo">Health Copilot</a>
+  <a href="#problem">Problem</a>
+  <a href="#market">Market</a>
+  <a href="#architecture">System</a>
+  <a href="#genetics">Genetics</a>
+  <a href="#intel">Daily Brief</a>
+  <a href="#results">Results</a>
+  <a href="#qa">Skeptics</a>
+  <a href="#clinicians">Clinicians</a>
+  <a href="#gtm">GTM</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="wrap" style="position:relative;">
+    <div class="hero-cross" aria-hidden="true"><div class="h"></div><div class="v"></div></div>
+    <div style="position:relative;z-index:1;">
+      <div class="hero-tag">AI-Automation.Studio · Boris Korol · London · 2026</div>
+      <div class="hero-title">Health <span>Copilot</span></div>
+      <div class="hero-tagline">Your data. Your biology. Your brief.</div>
+      <div class="hero-sub">A personal AI health operating system that synthesises your blood work, genetics, wearable data, and nutrition into one actionable daily brief — grounded entirely in Grade A/B clinical evidence.</div>
+      <div class="hero-pills">
+        <div class="pill">Personalised — not population averages</div>
+        <div class="pill">Evidence-based — Grade A/B source on every claim</div>
+        <div class="pill">Private — all processing local, no third-party servers</div>
+      </div>
+      <div class="audience-row">
+        <div class="aud-card">
+          <div class="aud-title">Health-conscious professionals</div>
+          <div class="aud-body">35–55, London. Own wearables, had private blood tests, frustrated with generic GP advice. Want to understand their own data.</div>
+        </div>
+        <div class="aud-card amber">
+          <div class="aud-title">Clinics &amp; practitioners</div>
+          <div class="aud-body">Wellness centres, GPs, nutritionists, integrative medicine. Reduce appointment prep from 30 min to 3. Pharmacogenomics flag before prescribing.</div>
+        </div>
+        <div class="aud-card dim">
+          <div class="aud-title">Early-stage investors</div>
+          <div class="aud-body">Health-tech, defensible data moat, working MVP, solo founder. Network-effect model as client data compounds over time.</div>
+        </div>
+      </div>
+      <div class="hero-footer">Contact: <strong style="color:var(--teal)">@BKproduct</strong> · boris.korol@ai-automation.studio</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEM ═══ -->
+<section id="problem">
+  <div class="wrap">
+    <div class="label">The Problem</div>
+    <h2>You have the data. <span>Nobody connects it.</span></h2>
+    <p class="subtitle">Six apps, a 15-minute GP appointment, and a drawer full of supplements with no evidence base. The fragmentation is the problem — and the opportunity.</p>
+    <div class="prob-grid">
+      <div class="prob-card red">
+        <div class="icon">🏥</div>
+        <h4>7 minutes with your GP</h4>
+        <p>An overloaded system. Fifteen minutes per appointment. No time to explain <strong>Ferritin 20, LDL 125, HRV dropping every Thursday, pharmacogenomic statin risk.</strong> Not the GP's fault — it's structural.</p>
+      </div>
+      <div class="prob-card amber">
+        <div class="icon">📱</div>
+        <h4>Six apps, zero synthesis</h4>
+        <p>Blood results in one app, sleep in another, steps in a third. <strong>None of them talk to each other.</strong> Generic AI tools say "drink more water." No personal context. No synthesis.</p>
+      </div>
+      <div class="prob-card teal">
+        <div class="icon">💊</div>
+        <h4>Eight supplements, no evidence</h4>
+        <p>Taking eight supplements with no confidence in any of them. <strong>Nobody explained why — or what to measure</strong> to know if they're working. Tests come back "normal" — yet you don't feel normal.</p>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-n">APOE ε4</div><div class="stat-l">Elevated LDL sensitivity to saturated fat — rarely communicated in standard care</div></div>
+      <div class="stat"><div class="stat-n">£400+/mo</div><div class="stat-l">Spent on consultations, tests, supplements — without a single system synthesising the data</div></div>
+      <div class="stat"><div class="stat-n">0 of 6</div><div class="stat-l">Data sources cross-referenced — each specialist sees their fragment, never the whole picture</div></div>
+      <div class="stat"><div class="stat-n">15 min</div><div class="stat-l">Average GP appointment — structurally insufficient for complex preventive care discussions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARKET VALIDATION ═══ -->
+<section id="market">
+  <div class="wrap">
+    <div class="label">Market Opportunity</div>
+    <h2>A market that's <span>already moving</span></h2>
+    <p class="subtitle">High-value clients already track everything. Practitioners already want better tools. The synthesis layer doesn't exist yet.</p>
+    <div class="market-grid">
+      <div class="market-card">
+        <div class="mc-label">Integrative &amp; Functional Medicine</div>
+        <div class="mc-stat">15–20% YoY</div>
+        <div class="mc-body">Growth in UK and Western Europe. Lifestyle Medicine is now a mandatory CPD module for UK GPs. Preventive care is no longer a fringe offering — it's mainstream clinical training.</div>
+      </div>
+      <div class="market-card">
+        <div class="mc-label">UK Private Preventive Health Spend</div>
+        <div class="mc-stat">£3.4B</div>
+        <div class="mc-body">2024 estimate — and growing. HNW clients at Harbour Club, Equinox, and longevity spas already pay for wearables, private bloods, and genetic testing. Nobody synthesises it for them.</div>
+      </div>
+      <div class="market-card">
+        <div class="mc-label">Appointment Compression</div>
+        <div class="mc-stat">30 min → 3 min</div>
+        <div class="mc-body">GP and clinic time saved on pre-appointment patient briefing. The one-page AI summary — trends, flags, one question — transforms a 15-minute consultation into a focused clinical conversation.</div>
+      </div>
+      <div class="market-card">
+        <div class="mc-label">Women's Health Signal</div>
+        <div class="mc-stat">Unmet demand</div>
+        <div class="mc-body">Perimenopause, fertility, IVF clinics: hormonal context + genetics + supplementation = zero integrated tooling. Explicit demand signal from practitioners. A dedicated module — not a generic feature.</div>
+      </div>
+    </div>
+    <div class="market-key">
+      <div class="mk-title">The key insight from practitioners</div>
+      <div class="mk-body">"The problem isn't data — it's synthesis. My clients have Apple Watches, private blood tests, even 23andMe results. But when they come to me, they can't tell me what any of it means together. That's the gap."</div>
+    </div>
+    <div class="verticals" style="margin-top:16px;">
+      <div class="vtag">Luxury gyms (Harbour Club, Equinox)</div>
+      <div class="vtag">Integrative medicine centres</div>
+      <div class="vtag">Longevity &amp; floating spas</div>
+      <div class="vtag">IVF &amp; fertility clinics</div>
+      <div class="vtag">Sports medicine</div>
+      <div class="vtag">Nutritionists &amp; dietitians</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ARCHITECTURE ═══ -->
+<section id="architecture">
+  <div class="wrap">
+    <div class="label">The System</div>
+    <h2>Five inputs. <span>Four expert minds.</span> One daily brief.</h2>
+    <p class="subtitle">Not a wellness app. A synthesis engine — four AI expert personas working simultaneously on your complete health context.</p>
+    <div class="arch-flow">
+      <div class="arch-col">
+        <div class="arch-item"><div class="al">Blood work</div><div class="ad">Biomarkers: lipids, iron, vitamins, inflammation markers</div></div>
+        <div class="arch-item"><div class="al">23andMe Genetics</div><div class="ad">553,811 SNPs — pharmacogenomics, nutrigenomics, disease risk</div></div>
+        <div class="arch-item"><div class="al">Wearable device</div><div class="ad">600+ days: HRV, resting HR, SpO2, sleep stages, stress load</div></div>
+        <div class="arch-item"><div class="al">Nutrition diary</div><div class="ad">Macros, fibre, micronutrients, dietary patterns over time</div></div>
+        <div class="arch-item"><div class="al">Voice journal</div><div class="ad">Symptoms, energy, mood, daily observations via Telegram</div></div>
+      </div>
+      <div class="arch-arrow" style="color:var(--teal);">→</div>
+      <div class="arch-core">
+        <div class="act">AI Core</div>
+        <div class="atitle">4 independent expert panels</div>
+        <div class="asub">All run simultaneously<br>on your complete dataset</div>
+        <div class="agents-mini">
+          <div class="am"><div class="aml">Geneticist</div><div class="amd">SNP → risks</div></div>
+          <div class="am"><div class="aml">Pharmacologist</div><div class="amd">drug interactions</div></div>
+          <div class="am"><div class="aml">Nutrigenomicist</div><div class="amd">diet + genes</div></div>
+          <div class="am"><div class="aml">Biostatistician</div><div class="amd">trends + data</div></div>
+        </div>
+      </div>
+      <div class="arch-arrow" style="color:var(--amber);">→</div>
+      <div class="arch-col">
+        <div class="arch-item out"><div class="al">Morning briefing</div><div class="ad">Telegram, 09:00 — HRV, biological age, today's protocol</div></div>
+        <div class="arch-item out"><div class="al">Supplement protocol</div><div class="ad">Only what your blood work confirms you need. Grade A/B only.</div></div>
+        <div class="arch-item out"><div class="al">Training plan</div><div class="ad">Zone 2 / Zone 4-5 based on last night's recovery and HRV</div></div>
+        <div class="arch-item out"><div class="al">Genetic context</div><div class="ad">APOE ε4, SLCO1B1, CYP2C9 — applied to today's decisions</div></div>
+        <div class="arch-item out"><div class="al">Doctor brief</div><div class="ad">One page: 18 months of trends, flags, one question per visit</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GENETICS PIPELINE ═══ -->
+<section id="genetics">
+  <div class="wrap">
+    <div class="label">Genetics Pipeline</div>
+    <h2>553,811 SNPs. <span>Eight steps. Four panels.</span></h2>
+    <p class="subtitle">Deterministic code for data extraction — not AI guessing. ClinVar API, CPIC guidelines, PharmGKB. AI is only the final interpretation layer.</p>
+    <div class="pipeline-row">
+      <div class="step"><div class="step-n">1</div><div class="step-t">Parse SNP file</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">2</div><div class="step-t">ClinVar API lookup</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">3</div><div class="step-t">CPIC guidelines</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">4</div><div class="step-t">PharmGKB</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">5</div><div class="step-t">Nutrigenomics map</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">6</div><div class="step-t">Cross-validate</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">7</div><div class="step-t">Grade A/B/C</div></div>
+      <div class="step-arr">›</div>
+      <div class="step"><div class="step-n">8</div><div class="step-t">Synthesise brief</div></div>
+    </div>
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="ah">Panel 1</div>
+        <h4>Clinical Geneticist</h4>
+        <ul>
+          <li>APOE ε3/ε4 → LDL + Alzheimer's risk</li>
+          <li>BRCA1/2 screening</li>
+          <li>Cardiovascular SNP variants</li>
+          <li>Population frequency benchmarking</li>
+        </ul>
+      </div>
+      <div class="agent-card">
+        <div class="ah">Panel 2</div>
+        <h4>Pharmacogeneticist</h4>
+        <ul>
+          <li>CYP2C9*3 + VKORC1 → warfarin flag</li>
+          <li>SLCO1B1*5 → statin transport risk</li>
+          <li>CYP2D6 → opioid metabolism</li>
+          <li>CPIC Level A recommendations</li>
+        </ul>
+      </div>
+      <div class="agent-card">
+        <div class="ah">Panel 3</div>
+        <h4>Nutrigenomicist</h4>
+        <ul>
+          <li>MTHFR + homocysteine rule</li>
+          <li>VDR / Vitamin D response</li>
+          <li>FADS1 → omega-3 conversion</li>
+          <li>Portfolio Diet protocol mapping</li>
+        </ul>
+      </div>
+      <div class="agent-card amber-t">
+        <div class="ah">Panel 4</div>
+        <h4>Biostatistician</h4>
+        <ul>
+          <li>600+ days → random forest model</li>
+          <li>HRV recovery predictors</li>
+          <li>Stress load → strongest recovery signal</li>
+          <li>Biological age calculation</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:var(--card);border-radius:7px;padding:16px 20px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+      <div style="color:var(--muted);font-size:12px;line-height:1.5;flex:1;min-width:200px;">
+        <strong style="color:var(--teal);">99.1% call rate</strong> · 23andMe raw data · GENOTYPED variants only (not imputed) · Informational only — all clinical decisions require physician review.
+      </div>
+      <div style="display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap;">
+        <div style="background:var(--teal2);border:1px solid var(--teal);color:var(--teal);font-size:11px;font-weight:700;padding:5px 12px;border-radius:4px;">Grade A — RCT / Meta-analysis</div>
+        <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.4);color:var(--amber);font-size:11px;font-weight:700;padding:5px 12px;border-radius:4px;">Grade B — Strong observational</div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--muted);font-size:11px;font-weight:700;padding:5px 12px;border-radius:4px;">Grade C — Expert consensus</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DAILY INTELLIGENCE ═══ -->
+<section id="intel">
+  <div class="wrap">
+    <div class="label">Daily Intelligence</div>
+    <h2>09:00. Telegram. <span>Everything you need to know today.</span></h2>
+    <p class="subtitle">Not a generic wellness tip. A personalised synthesis of your last night's physiology, your genetic profile, and your current biomarkers — in plain language.</p>
+    <div class="intel-grid">
+      <div class="briefing-box">
+        <div class="bb-hdr">📊 Boris · Health Copilot · 09:00</div>
+        <div class="bb-row"><span class="bbk">HRV</span><span class="bbv g">96 ms ↑ excellent</span></div>
+        <div class="bb-row"><span class="bbk">Resting HR</span><span class="bbv">56 bpm</span></div>
+        <div class="bb-row"><span class="bbk">Biological age</span><span class="bbv t">~47 yrs (−4 vs chronological)</span></div>
+        <div class="bb-row"><span class="bbk">Recovery score</span><span class="bbv g">88% ✓</span></div>
+        <div class="bb-row"><span class="bbk">Sleep</span><span class="bbv">7h 12min · REM 22%</span></div>
+        <div class="bb-row"><span class="bbk">Training today</span><span class="bbv t">Zone 2 · 45 min</span></div>
+        <div class="bb-row"><span class="bbk">Peak window</span><span class="bbv">06:30 – 08:30</span></div>
+        <div class="bb-row"><span class="bbk">APOE ε4 context</span><span class="bbv a">↓ saturated fat today</span></div>
+        <div class="bb-rec">✦ Today: olive oil not butter. 30g nuts. Fibre ≥30g. LDL status: 125 — within management range. Portfolio Diet protocol active.</div>
+      </div>
+      <div class="intel-features">
+        <div class="feature">
+          <h4>Personal data — not population averages</h4>
+          <p>Every recommendation is based on your specific gene variants, your specific biomarkers, your specific last night's HRV — not "a typical 40-year-old patient." This is the core difference.</p>
+        </div>
+        <div class="feature a">
+          <h4>The strongest recovery predictor is not sleep duration</h4>
+          <p>After 600+ days of data and a random forest model: the top predictor of poor next-day recovery is minutes spent in high-stress states during the day. One intense meeting day can erase a good workout and 7 hours of sleep.</p>
+        </div>
+        <div class="feature">
+          <h4>Genetic context, applied to today</h4>
+          <p>APOE ε4 status shapes today's dietary recommendation. Vitamin D + K2-MK7 only when blood work confirms deficiency. No supplement recommendation without a confirming test and a Grade A source.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REAL RESULTS ═══ -->
+<section id="results">
+  <div class="wrap">
+    <div class="label">Real Results</div>
+    <h2>Data that changed <span>actual decisions</span></h2>
+    <p class="subtitle">Not projections. These are real protocol changes — each traceable to a specific variant, a specific test, a specific Grade A source.</p>
+    <div class="results-grid">
+      <div class="results-col">
+        <h3>Genetic findings — Boris Korol</h3>
+        <div class="result-card">
+          <div class="rc-gene">APOE ε3/ε4</div>
+          <div class="rc-name">LDL sensitivity + Alzheimer's risk</div>
+          <div class="rc-body">Saturated fat → elevated LDL. 3× increased Alzheimer's risk vs baseline. Neither was communicated in standard private care.</div>
+          <div class="rc-action">✓ Replaced butter with olive oil. Saturated fat target &lt;7% of calories. <span class="gb">Grade A</span></div>
+        </div>
+        <div class="result-card">
+          <div class="rc-gene">CYP2C9*3 + VKORC1 −1639A</div>
+          <div class="rc-name">Anticoagulant contraindication</div>
+          <div class="rc-body">Standard warfarin is unsafe at this combination. Now documented in medical record before any clinical need arises.</div>
+          <div class="rc-action">✓ If anticoagulation required: apixaban or rivaroxaban. CPIC <span class="gb">Grade A</span></div>
+        </div>
+        <div class="result-card">
+          <div class="rc-gene">SLCO1B1*5</div>
+          <div class="rc-name">Statin transport to liver — impaired</div>
+          <div class="rc-body">Simvastatin &gt;20mg → myopathy risk. LDL 125 requires treatment. Now know which statin is safe for this genotype.</div>
+          <div class="rc-action">✓ Rosuvastatin or pravastatin as safe alternatives. <span class="gb">Grade A</span></div>
+        </div>
+      </div>
+      <div class="results-col">
+        <h3>Protocol outcomes — measurable</h3>
+        <div class="metric-card">
+          <div class="metric-n">−17%</div>
+          <div class="metric-l">LDL cholesterol in 3 months</div>
+          <div class="metric-d">Portfolio Diet: 30g fibre/day, phytosterols 2g, 30–50g nuts, saturated fat ≤12g. Verified blood retest. Jenkins et al. <span class="gb">Grade A</span></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-n">600+</div>
+          <div class="metric-l">Days of continuous wearable data</div>
+          <div class="metric-d">Random forest on HRV/stress time series. Top recovery predictor: daily stress-load minutes — not sleep duration. Signal validated above noise at this sample size.</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-n">47 yrs</div>
+          <div class="metric-l">Biological age vs 51 chronological</div>
+          <div class="metric-d">Derived from HRV, SpO2, resting HR, sleep stage patterns. Trend is the signal; absolute figure is the orientation point.</div>
+        </div>
+        <div class="metric-card">
+          <div style="color:var(--teal);font-size:13px;font-weight:700;margin-bottom:6px;">The MTHFR rule <span class="gb">Grade A</span></div>
+          <div class="metric-d">A genetic variant without a biochemical expression is not a diagnosis. If homocysteine + B12 + folate are all normal → MTHFR is functionally neutralised. Do not take methylfolate "just in case."</div>
+        </div>
+        <div class="metric-card" style="border-left:3px solid var(--amber);background:rgba(245,158,11,.06);">
+          <div style="color:var(--amber);font-size:12px;font-weight:700;margin-bottom:6px;">⚠ What this system does NOT do</div>
+          <div class="metric-d">Biological age is a <strong style="color:var(--white)">tracking metric</strong>, not a lifespan oracle. Anyone claiming they can predict your lifespan from biomarkers is not doing science. Health Copilot shows trends — the direction of travel matters, not the absolute number. Decisions remain with you and your physician.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SKEPTIC Q&A ═══ -->
+<section id="qa">
+  <div class="wrap">
+    <div class="label">Addressing Scepticism</div>
+    <h2>The questions <span>you should be asking</span></h2>
+    <p class="subtitle">From doctors, nutritionists, and clients. Answered directly — no deflection.</p>
+    <div class="qa-grid">
+      <div class="qa-card">
+        <div class="q">Can AI be trusted with health decisions?</div>
+        <div class="a">AI is the interpreter, not the data source. Facts come from deterministic code: SNP parser, ClinVar API, CPIC. Every conclusion carries a <span class="gb">Grade A/B</span> tag and a direct citation. You can audit every claim.</div>
+      </div>
+      <div class="qa-card">
+        <div class="q">Doesn't AI hallucinate?</div>
+        <div class="a">Zero-hallucination policy. Any claim without a <span class="gb">Grade A/B</span> source is either excluded or labelled "unverified." The system goes silent rather than speculate. No wellness noise.</div>
+      </div>
+      <div class="qa-card">
+        <div class="q">Does this replace the GP?</div>
+        <div class="a">No — it prepares the patient for the GP. Instead of spending 5 of 7 minutes explaining context, the patient arrives with a one-page brief: 18 months of trends, 3 key flags, one specific question. The quality of the clinical conversation multiplies.</div>
+      </div>
+      <div class="qa-card">
+        <div class="q">How reliable is 23andMe data for clinical use?</div>
+        <div class="a">For nutrition and lifestyle optimisation: yes. For clinical decisions: always flagged as "requires WGS confirmation." 553,811 SNPs, 99.1% call rate, GENOTYPED variants only — not imputed. Informational by default.</div>
+      </div>
+      <div class="qa-card">
+        <div class="q">What about data privacy?</div>
+        <div class="a">All data is processed locally on your device. The genomic file never leaves your machine. No third-party servers. No cloud storage of health data. Full control remains with the individual.</div>
+      </div>
+      <div class="qa-card">
+        <div class="q">Does it work for women?</div>
+        <div class="a">Yes. The Portfolio Diet −17% LDL result is validated on a mixed-gender cohort. A dedicated Women's Health module covers hormonal context (perimenopause, fertility, IVF) via a separate agent. <span class="gb">Grade A</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOR CLINICIANS ═══ -->
+<section id="clinicians">
+  <div class="wrap">
+    <div class="label">For Clinicians</div>
+    <h2>A tool that makes your <span>appointments better</span></h2>
+    <p class="subtitle">Health Copilot doesn't replace clinical judgement — it gives you 18 months of patient context in three minutes, before you walk into the room.</p>
+    <div class="clin-grid">
+      <div>
+        <div class="clin-cards">
+          <div class="clin-card">
+            <div class="clin-num">01</div>
+            <div class="clin-body">
+              <h4>Pre-appointment briefing</h4>
+              <p>GP or nutritionist receives a one-page AI summary before the patient visit: 18 months of biomarker trends, pharmacogenomic flags, three patient questions. Preparation time: 30 min → 3 min.</p>
+            </div>
+          </div>
+          <div class="clin-card">
+            <div class="clin-num">02</div>
+            <div class="clin-body">
+              <h4>Pharmacogenomic safety flag</h4>
+              <p>Drug interaction warnings based on the patient's CYP450 profile — before prescribing, not after. Reduces adverse events at the point of decision, not during review.</p>
+            </div>
+          </div>
+          <div class="clin-card">
+            <div class="clin-num">03</div>
+            <div class="clin-body">
+              <h4>White-label &amp; customisable modules</h4>
+              <p>System configures around your practice's clientele. Sports medicine, longevity, nutritionist — each vertical gets a tailored agent focus and output format. Not one-size-fits-all.</p>
+            </div>
+          </div>
+        </div>
+        <div class="womens-box">
+          <div class="wb-title">Women's Health Module</div>
+          <div class="wb-body">Perimenopause, fertility, IVF support: hormonal context (oestrogen, progesterone cycles), genetic supplementation flags, bone density markers, and iron-D3-K2 synergy — handled by a dedicated agent. Available as a module for gynaecology, IVF, and menopause clinics.</div>
+        </div>
+      </div>
+      <div>
+        <div class="outcomes-box">
+          <h4>Measurable clinic outcomes</h4>
+          <div class="outcome-item"><div class="od"></div><div class="ot">Doctor prep time: 30 min → 3 min per consultation (18 months of context, instantly)</div></div>
+          <div class="outcome-item"><div class="od"></div><div class="ot">Pharmacogenomic flags identified before prescribing — not during review</div></div>
+          <div class="outcome-item"><div class="od"></div><div class="ot">18 months of biomarker trends visible in one view</div></div>
+          <div class="outcome-item"><div class="od"></div><div class="ot">Patient retention: they feel heard, understood, and informed</div></div>
+          <div class="outcome-item"><div class="od"></div><div class="ot">Repeat tests only when clinically indicated — not "just in case"</div></div>
+          <div class="outcome-item"><div class="od"></div><div class="ot">FHIR-compatible structured output — integrates with EMR systems</div></div>
+        </div>
+        <div class="quote-box">
+          <div class="quote-text">"Instead of spending 10 of 15 minutes establishing context — the patient arrives with a prepared brief. The conversation becomes completely different."</div>
+          <div class="quote-attr">— Boris Korol, Health Copilot</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GTM ═══ -->
+<section id="gtm">
+  <div class="wrap">
+    <div class="label">What's Next</div>
+    <h2>90-day GTM: <span>Pilot → Productise → Partner</span></h2>
+    <p class="subtitle">Your data already exists. All that's missing is the system that connects it.</p>
+    <div class="gtm-grid">
+      <div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot-col"><div class="tl-circle"></div><div class="tl-line"></div></div>
+            <div class="tl-content">
+              <div class="tl-phase">Now · Biohacking communities</div>
+              <div class="tl-title">UK biohackers — people who already have data</div>
+              <div class="tl-body">Entry via structured UK biohacking communities (122+ members, Oxford Biohacking Society). Target: enthusiasts with existing blood work, wearable history, and genetic tests — zero data-collection friction. £250/month pilot, 2 places initially.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-col"><div class="tl-circle"></div><div class="tl-line"></div></div>
+            <div class="tl-content">
+              <div class="tl-phase">Q2 2026 · Specialist white-label</div>
+              <div class="tl-title">Nutritionists, sports medicine, integrative GPs</div>
+              <div class="tl-body">Specialists get the system under their own brand — serving their clients with pre-appointment briefings and pharmacogenomic flags. Data stays with the clinic. Revenue: £500/month per practice, 10-patient pilot.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot-col"><div class="tl-circle"></div><div class="tl-line"></div></div>
+            <div class="tl-content">
+              <div class="tl-phase">Q3 2026 · Platform & API</div>
+              <div class="tl-title">Luxury gyms · IVF clinics · Longevity spas · Wellness centres</div>
+              <div class="tl-body">White-label platform with vertical-specific modules. FHIR-compatible API. Subscription scales per clinic size. UK and Switzerland primary markets.</div>
+            </div>
+          </div>
+        </div>
+        <div class="geo-row">
+          <div class="geo">
+            <h5>United Kingdom</h5>
+            <p>Active biohacking scene. GPs shifting to Lifestyle Medicine. NHS private sector growth. Equinox / Harbour Club tier clientele.</p>
+          </div>
+          <div class="geo">
+            <h5>Russia · Kazakhstan</h5>
+            <p>Compatible genetic labs: Genotek, Atlas Biomed. Strong biohacker community, high receptivity to longevity tools.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="contact-card">
+          <div class="cc-label">Pilot — now accepting applications</div>
+          <div class="cc-pilot">
+            <div class="cc-price">£250</div>
+            <div class="cc-period">per month · 2 places available</div>
+            <div class="cc-includes">✓ Full system setup &amp; onboarding<br>✓ Genetics + blood work analysis<br>✓ Daily morning briefing in Telegram<br>✓ Weekly check-in and protocol review</div>
+          </div>
+          <div style="color:var(--muted);font-size:12px;margin-bottom:4px;">Message on Telegram:</div>
+          <div class="cc-handle">@BKproduct</div>
+          <div class="cc-email">boris.korol@ai-automation.studio</div>
+        </div>
+        <div class="cta-strip">
+          <p>You already have an Apple Watch. You've had blood tests. Maybe you've done 23andMe. But without synthesis, it's just noise.
+          <strong>All you need is the system.</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>AI-Automation.Studio · Boris Korol · London · March 2026 · @BKproduct</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  const h=document.body.scrollHeight-window.innerHeight;
+  document.getElementById('progress-bar').style.width=(window.scrollY/h*100)+'%';
+});
+const sections=document.querySelectorAll('section[id]');
+const navLinks=document.querySelectorAll('nav a[href^="#"]');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(a=>a.classList.remove('active'));
+      const a=document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(a)a.classList.add('active');
+    }
+  });
+},{rootMargin:'-40% 0px -55% 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
