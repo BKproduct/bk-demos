@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Байесы Оптимизма — Prediction Markets Research 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --ink: #0f0e11;
+  --paper: #f5f2ee;
+  --accent: #c8402b;
+  --accent2: #2b5fc8;
+  --gold: #c8962b;
+  --muted: #7a7570;
+  --border: #ddd8d0;
+  --surface: #ffffff;
+  --code: #1a1a2e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+}
+
+/* ───────── HEADER TAPE ───────── */
+.header-tape {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0 0 0 0;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticker {
+  background: var(--accent);
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: white;
+}
+
+.ticker-inner {
+  display: inline-block;
+  animation: scroll-left 30s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.header-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 64px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.08em;
+}
+
+.header-logo {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.header-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 64px 80px;
+}
+
+.kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kicker::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+
+h1.masthead {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(52px, 7vw, 96px);
+  line-height: 1.0;
+  color: white;
+  max-width: 900px;
+  margin-bottom: 32px;
+}
+
+h1.masthead em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.deck {
+  font-size: 18px;
+  color: rgba(255,255,255,0.65);
+  max-width: 640px;
+  line-height: 1.65;
+  margin-bottom: 48px;
+}
+
+.stats-row {
+  display: flex;
+  gap: 48px;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.stat-item {}
+.stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 42px;
+  color: white;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.3);
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.scroll-arrow {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.4));
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+/* ───────── SECTION STRUCTURE ───────── */
+.section {
+  padding: 80px 64px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.section-dark {
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: none;
+}
+
+.section-accent {
+  background: var(--accent);
+  color: white;
+}
+
+.section-gold {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.section-code {
+  background: var(--code);
+  color: #a9b1d6;
+}
+
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.section-dark .section-number { color: rgba(255,255,255,0.3); }
+.section-accent .section-number { color: rgba(255,255,255,0.7); }
+
+h2.section-head {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.section-dark h2.section-head { color: white; }
+.section-accent h2.section-head { color: white; }
+
+.lead-text {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 700px;
+  margin-bottom: 48px;
+}
+
+.section-dark .lead-text { color: rgba(255,255,255,0.6); }
+.section-accent .lead-text { color: rgba(255,255,255,0.85); }
+
+/* ───────── LAYOUT HELPERS ───────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+/* ───────── BIAS CARDS ───────── */
+.bias-block {
+  border-top: 3px solid;
+  padding-top: 24px;
+  margin-bottom: 8px;
+}
+
+.bias-block.red { border-color: var(--accent); }
+.bias-block.blue { border-color: var(--accent2); }
+.bias-block.gold { border-color: var(--gold); }
+.bias-block.green { border-color: #2bc87a; }
+
+.bias-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.bias-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+
+.bias-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.bias-cite {
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(200,64,43,0.07);
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ───────── DATA VIZ ───────── */
+.chart-row {
+  margin-bottom: 14px;
+}
+
+.chart-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.chart-label-text { color: var(--muted); }
+.chart-label-val { font-weight: 700; }
+.chart-label-val.neg { color: var(--accent); }
+.chart-label-val.pos { color: #2bc87a; }
+.chart-label-val.mid { color: var(--gold); }
+
+.chart-bar {
+  height: 10px;
+  background: rgba(0,0,0,0.07);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.chart-fill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.fill-neg { background: var(--accent); }
+.fill-pos { background: #2bc87a; }
+.fill-mid { background: var(--gold); }
+.fill-neutral { background: var(--muted); }
+
+/* ───────── FAILURES TAPE ───────── */
+.failure-item {
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: start;
+}
+
+.failure-item:last-child { border-bottom: none; }
+
+.failure-year {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  padding-top: 4px;
+}
+
+.failure-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.failure-body {
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+.failure-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badge-loss { background: rgba(200,64,43,0.25); color: #f87171; }
+.badge-win { background: rgba(43,200,122,0.2); color: #4ade80; }
+.badge-mixed { background: rgba(200,150,43,0.25); color: #fbbf24; }
+
+/* ───────── STRATEGY STRIPS ───────── */
+.strategy-strip {
+  border: 1px solid var(--border);
+  border-radius: 0;
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+
+.strategy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.strategy-title-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.strategy-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  color: var(--border);
+  line-height: 1;
+}
+
+.strategy-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.strategy-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.return-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.pill-green { background: rgba(43,200,122,0.12); color: #16a34a; }
+.pill-gold { background: rgba(200,150,43,0.12); color: #92400e; }
+.pill-red { background: rgba(200,64,43,0.12); color: var(--accent); }
+
+.strategy-body {
+  padding: 28px;
+  background: #fafaf8;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.strategy-detail-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.strategy-detail-text {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ───────── SCORING TABLE ───────── */
+.score-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.score-table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.score-table td {
+  padding: 14px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.8);
+  vertical-align: top;
+}
+
+.score-table tr:last-child td { border-bottom: none; }
+
+.score-pts {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.score-signal { color: white; font-size: 13px; }
+.score-desc { color: rgba(255,255,255,0.45); font-size: 12px; margin-top: 3px; }
+
+/* ───────── CASE STUDY ───────── */
+.case-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 0;
+  border: 1px solid var(--border);
+}
+
+.case-left {
+  background: var(--ink);
+  color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.case-right {
+  padding: 40px;
+  background: white;
+}
+
+.case-metric {
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.case-metric:last-child { border-bottom: none; }
+
+.case-metric-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 4px;
+}
+
+.case-metric-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  color: white;
+  line-height: 1.1;
+}
+
+.case-metric-value.accent { color: var(--gold); }
+.case-metric-value.red { color: #f87171; }
+.case-metric-value.green { color: #4ade80; }
+
+.case-metric-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+.verdict-panel {
+  background: rgba(200,64,43,0.06);
+  border: 1px solid rgba(200,64,43,0.2);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-top: 20px;
+}
+
+.verdict-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.verdict-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.comparison-bar-group {
+  margin-bottom: 20px;
+}
+
+.comp-label {
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* ───────── REFERENCES ───────── */
+.ref-strip {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.ref-strip:last-child { border-bottom: none; }
+
+.ref-cite {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent2);
+  line-height: 1.4;
+}
+
+.ref-finding {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.ref-finding strong { color: var(--ink); }
+
+/* ───────── PULL QUOTE ───────── */
+.pull-quote {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.3;
+  color: white;
+  padding: 48px 64px;
+  border-left: 4px solid var(--accent);
+  background: var(--ink);
+  margin: 0;
+}
+
+.pull-quote em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.pull-source {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ───────── ACTION LIST ───────── */
+.action-item {
+  display: flex;
+  gap: 28px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.action-item:last-child { border-bottom: none; }
+
+.action-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--border);
+  min-width: 64px;
+}
+
+.action-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.action-body {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 600px;
+}
+
+/* ───────── PLATFORM TABLE ───────── */
+.platform-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.platform-table th {
+  text-align: left;
+  padding: 12px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid var(--ink);
+  background: white;
+}
+
+.platform-table td {
+  padding: 14px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--ink);
+}
+
+.platform-table tr:hover td { background: rgba(0,0,0,0.02); }
+
+.td-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.td-red { color: var(--accent); font-weight: 600; }
+.td-green { color: #16a34a; font-weight: 600; }
+.td-gold { color: var(--gold); font-weight: 600; }
+
+/* ───────── RISK MATRIX ───────── */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+
+.risk-cell {
+  background: white;
+  padding: 24px;
+}
+
+.risk-cell-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.risk-cell-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.risk-cell-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ───────── FOOTER ───────── */
+.footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.4);
+  padding: 48px 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.footer-left {
+  font-family: 'DM Serif Display', serif;
+  font-size: 24px;
+  color: white;
+}
+
+.footer-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: right;
+}
+
+.footer-link {
+  color: var(--gold);
+  text-decoration: none;
+  display: block;
+  margin-top: 8px;
+}
+
+/* ───────── DIVIDER ───────── */
+.rule { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+/* ───────── NAV DOT ───────── */
+.sticky-nav {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+}
+
+.nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-dot.active { background: var(--accent); transform: scale(1.5); }
+.nav-dot:hover { background: var(--ink); }
+
+/* ───────── SCROLL PROGRESS ───────── */
+.progress-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 200;
+  transition: width 0.1s linear;
+}
+
+@media (max-width: 768px) {
+  .section { padding: 48px 24px; }
+  .header-body { padding: 40px 24px 60px; }
+  .header-meta { padding: 20px 24px; }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+  .case-grid { grid-template-columns: 1fr; }
+  .strategy-body { grid-template-columns: 1fr; }
+  .ref-strip { grid-template-columns: 1fr; }
+  .failure-item { grid-template-columns: 60px 1fr; }
+  .failure-badge { display: none; }
+  .stats-row { flex-wrap: wrap; gap: 28px; }
+  .footer { flex-direction: column; }
+  .footer-meta { text-align: left; }
+  .sticky-nav { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-line" id="progressLine"></div>
+
+<!-- STICKY NAV DOTS -->
+<div class="sticky-nav" id="stickyNav">
+  <div class="nav-dot active" data-target="hero" title="Intro"></div>
+  <div class="nav-dot" data-target="biases" title="Байесы"></div>
+  <div class="nav-dot" data-target="evidence" title="Данные"></div>
+  <div class="nav-dot" data-target="failures" title="Сбои"></div>
+  <div class="nav-dot" data-target="strategies" title="Стратегии"></div>
+  <div class="nav-dot" data-target="framework" title="Фреймворк"></div>
+  <div class="nav-dot" data-target="putin" title="Кейс: Путин"></div>
+  <div class="nav-dot" data-target="platforms" title="Платформы"></div>
+  <div class="nav-dot" data-target="refs" title="Источники"></div>
+  <div class="nav-dot" data-target="actions" title="План"></div>
+</div>
+
+<!-- ═══════════════════════════════
+     SECTION 0 — HERO
+════════════════════════════════ -->
+<header class="header-tape" id="hero">
+  <div class="ticker">
+    <span class="ticker-inner">
+      &nbsp;&nbsp;&nbsp;PARALLEL.AI ULTRA RESEARCH — 101 ИСТОЧНИК — МАРТ 2026 &nbsp;&nbsp;·&nbsp;&nbsp; FAVORITE-LONGSHOT BIAS ПОДТВЕРЖДЁН НА ДАННЫХ KALSHI 2021-2025 &nbsp;&nbsp;·&nbsp;&nbsp; УБЫТОК 60%+ ПРИ КОНТРАКТАХ &lt;10¢ &nbsp;&nbsp;·&nbsp;&nbsp; ПУТИН-РЫНОК: SCORE 23/30 — ВЫСОКАЯ КОНФИДЕНЦИЯ ШОРТА &nbsp;&nbsp;·&nbsp;&nbsp; YES-АСИММЕТРИЯ: $529M ОБЪЁМА НА ИРАНЕ (ФЕВРАЛЬ 2026) &nbsp;&nbsp;·&nbsp;&nbsp; UMA GOVERNANCE RISK: WHALE С 25% ГОЛОСОВ (UKRAINE MINERALS, МАРТ 2025) &nbsp;&nbsp;·&nbsp;&nbsp; PARALLEL.AI ULTRA RESEARCH — 101 ИСТОЧНИК — МАРТ 2026 &nbsp;&nbsp;·&nbsp;&nbsp; FAVORITE-LONGSHOT BIAS ПОДТВЕРЖДЁН НА ДАННЫХ KALSHI 2021-2025 &nbsp;&nbsp;·&nbsp;&nbsp; УБЫТОК 60%+ ПРИ КОНТРАКТАХ &lt;10¢ &nbsp;&nbsp;·&nbsp;&nbsp; ПУТИН-РЫНОК: SCORE 23/30 — ВЫСОКАЯ КОНФИДЕНЦИЯ ШОРТА &nbsp;&nbsp;·&nbsp;&nbsp; YES-АСИММЕТРИЯ: $529M ОБЪЁМА НА ИРАНЕ (ФЕВРАЛЬ 2026) &nbsp;&nbsp;·&nbsp;&nbsp; UMA GOVERNANCE RISK: WHALE С 25% ГОЛОСОВ (UKRAINE MINERALS, МАРТ 2025)&nbsp;&nbsp;&nbsp;
+    </span>
+  </div>
+
+  <div class="header-meta">
+    <div class="header-logo">BK RESEARCH</div>
+    <div>PREDICTION MARKETS INTELLIGENCE · 2026</div>
+    <div>PARALLEL.AI ULTRA · 101 SOURCES</div>
+  </div>
+
+  <div class="header-body">
+    <div class="kicker">Deep Research · Байесы и избыточный оптимизм</div>
+    <h1 class="masthead">Как рынки<br><em>ошибаются</em><br>системно</h1>
+    <p class="deck">Когнитивные байесы на Polymarket и Kalshi создают повторяющиеся паттерны переоценки. Это руководство по их идентификации, валидации и извлечению прибыли с потенциалом 2×–10×.</p>
+
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">101</div>
+        <div class="stat-label">Источников Parallel.ai</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">60%+</div>
+        <div class="stat-label">Убыток на longshots &lt;10¢</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">13%</div>
+        <div class="stat-label">Путин YES vs 3–5% эксперты</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">2–10×</div>
+        <div class="stat-label">Потенциал контрарных позиций</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-arrow"></div>
+    SCROLL
+  </div>
+</header>
+
+<!-- ═══════════════════════════════
+     SECTION 1 — TWO BIASES
+════════════════════════════════ -->
+<section class="section" id="biases">
+  <div class="section-number">01 — Механика байесов</div>
+  <h2 class="section-head">Два источника<br>систематической ошибки</h2>
+  <p class="lead-text">Они работают одновременно и взаимно усиливают друг друга — особенно в геополитических рынках с эмоциональным зарядом.</p>
+
+  <div class="two-col">
+    <div>
+      <div class="bias-block red">
+        <div class="bias-number">Байес № 1 · Favorite-Longshot Bias</div>
+        <div class="bias-name">Переоценка маловероятных событий</div>
+        <div class="bias-body">
+          Толпа систематически завышает цену «лонгшотов» — событий с низкой вероятностью. Чем ниже implied probability, тем сильнее переоценка. Исследование Kalshi (2021–2025) показало: контракты ценой до 10¢ приносили инвесторам убыток более 60% в среднем.<br><br>
+          Красная зона для шорта: <strong>5% — 15%</strong> implied probability. Именно в этом диапазоне смещение наиболее выражено.
+        </div>
+        <span class="bias-cite">Bürgi, Deng & Whelan (2026) · Snowberg & Wolfers (2008)</span>
+      </div>
+
+      <div class="bias-block gold" style="margin-top: 32px;">
+        <div class="bias-number">Байес № 3 · Motivated Reasoning</div>
+        <div class="bias-name">Асимметрия убеждений: Long vs Short</div>
+        <div class="bias-body">
+          Эксперимент (Review of Accounting Studies, 2023): держатели YES-позиций формируют систематически завышенные прогнозы. Держатели NO — объективны. Это создаёт структурное преимущество шорт-трейдера: он смотрит трезво, а большинство рынка — нет.
+        </div>
+        <span class="bias-cite">Review of Accounting Studies, 2023</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="bias-block blue">
+        <div class="bias-number">Байес № 2 · Wishful Thinking / YES-Asymmetry</div>
+        <div class="bias-name">«Налог оптимизма» на желаемые исходы</div>
+        <div class="bias-body">
+          Когда участники желают определённого исхода — они ставят на него больше. Другие трейдеры видят крупные YES-ставки и ошибочно интерпретируют их как «информацию», а не «желание». Так создаётся эффект заражения: цена YES растёт выше реальной вероятности.<br><br>
+          Живой пример: рынки по удару США по Ирану (февраль 2026) — $529 млн объёма. Один рынок по Хаменеи — $45 млн. Рынок ошибался на порядок.
+        </div>
+        <span class="bias-cite">Seybert & Bloomfield, Management Science · Polymarket Feb 2026</span>
+      </div>
+
+      <div class="bias-block green" style="margin-top: 32px;">
+        <div class="bias-number">Байес № 4 · Prediction Format Effect</div>
+        <div class="bias-name">Бинарный YES/NO усиливает оптимизм</div>
+        <div class="bias-body">
+          PMC (2023): когда интерфейс предлагает бинарный выбор (как на Polymarket), люди выражают <em>больший байес желания</em>, чем при шкале вероятности (как на Metaculus). Дизайн платформы — не нейтральный: он системно усиливает YES-смещение.
+        </div>
+        <span class="bias-cite">PMC, 2023 · Prediction vs Probability Format</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PULL QUOTE -->
+<blockquote class="pull-quote">
+  «Wishful betting заразно: наблюдатели интерпретируют <em>предпочтения</em> других как информацию и обновляют свои убеждения вверх. Рынок amplifies wishful thinking, а не corrects it.»
+  <div class="pull-source">Seybert & Bloomfield — "Contagion of Wishful Thinking in Markets", Management Science</div>
+</blockquote>
+
+<!-- ═══════════════════════════════
+     SECTION 2 — EVIDENCE
+════════════════════════════════ -->
+<section class="section" id="evidence">
+  <div class="section-number">02 — Количественные доказательства</div>
+  <h2 class="section-head">Данные: 4 года<br>транзакций Kalshi</h2>
+  <p class="lead-text">Bürgi, Deng & Whelan (2026) — первое крупное академическое исследование на транзакционных данных регулируемой биржи предсказаний.</p>
+
+  <div class="two-col">
+    <div>
+      <div style="margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);">Средняя доходность инвесторов по ценовым бакетам (Kalshi 2021–2025)</div>
+
+      <div class="chart-row">
+        <div class="chart-label">
+          <span class="chart-label-text">0–10¢ · вероятность &lt;10%</span>
+          <span class="chart-label-val neg">−60%+ убыток</span>
+        </div>
+        <div class="chart-bar"><div class="chart-fill fill-neg" style="width:100%"></div></div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-label">
+          <span class="chart-label-text">10–25¢ · вероятность 10–25%</span>
+          <span class="chart-label-val neg">−20% убыток</span>
+        </div>
+        <div class="chart-bar"><div class="chart-fill fill-neg" style="width:33%; opacity:0.6;"></div></div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-label">
+          <span class="chart-label-text">25–50¢ · вероятность 25–50%</span>
+          <span class="chart-label-val mid">≈ 0% (нейтрально)</span>
+        </div>
+        <div class="chart-bar"><div class="chart-fill fill-neutral" style="width:4%;"></div></div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-label">
+          <span class="chart-label-text">50–75¢ · вероятность 50–75%</span>
+          <span class="chart-label-val pos">+небольшой профит</span>
+        </div>
+        <div class="chart-bar"><div class="chart-fill fill-pos" style="width:18%;"></div></div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-label">
+          <span class="chart-label-text">&gt;75¢ · вероятность &gt;75%</span>
+          <span class="chart-label-val pos">+умеренный профит</span>
+        </div>
+        <div class="chart-bar"><div class="chart-fill fill-pos" style="width:28%;"></div></div>
+      </div>
+
+      <div style="margin-top: 16px; font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; border-top: 1px solid var(--border); padding-top: 12px;">
+        Источник: Bürgi, Deng & Whelan (2026 working paper).<br>Transaction-level data, Kalshi 2021–2025.
+      </div>
+    </div>
+
+    <div>
+      <div style="margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);">Что это значит для трейдера</div>
+
+      <div style="margin-bottom: 20px; padding: 20px 24px; border: 1px solid var(--border); background: white;">
+        <div class="strategy-detail-label">Математика шорта YES в красной зоне</div>
+        <div style="font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 8px;">YES = $0.10 → ROI шорта +900%</div>
+        <div class="strategy-detail-text">Если YES торгуется 10¢ и вы покупаете NO за 90¢ — при правильном исходе прибыль 11% на капитал. Но если YES = 10¢ из-за wishful thinking при реальной вероятности 2–3% — ожидаемая стоимость NO сильно положительная.</div>
+      </div>
+
+      <div style="padding: 20px 24px; border: 1px solid rgba(200,64,43,0.2); background: rgba(200,64,43,0.04);">
+        <div class="strategy-detail-label" style="color: var(--accent);">Ключевой вывод</div>
+        <div class="strategy-detail-text">Ставить YES в диапазоне 5–15% — это систематически убыточно на дистанции. Противоположная позиция (NO) имеет положительное математическое ожидание. Академические данные четырёх лет это подтверждают.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 3 — DOCUMENTED FAILURES (DARK)
+════════════════════════════════ -->
+<section class="section section-dark" id="failures">
+  <div class="section-number" style="color: rgba(255,255,255,0.3);">03 — Задокументированные сбои · 2022–2025</div>
+  <h2 class="section-head" style="color: white;">Когда рынок был<br>неправ — или хуже</h2>
+  <p class="lead-text">4 случая, где Oracle Polymarket (UMA) произвёл спорное или манипулированное решение. Критично для контрарной стратегии: не только рынок может ошибаться — резолюция тоже.</p>
+
+  <div>
+    <div class="failure-item">
+      <div class="failure-year">Март 2025</div>
+      <div>
+        <div class="failure-title">Ukraine → Trump Rare-Earth Metals</div>
+        <div class="failure-body">YES-цена взлетела с 9% до ~100% непосредственно перед резолюцией. UMA whale с <strong style="color:white;">~25% голосов</strong> проголосовал YES против публичных фактов. Polymarket признал «беспрецедентную governance атаку», но отказал в рефандах. Контрарные трейдеры, правые фактически — потеряли всё.</div>
+      </div>
+      <div>
+        <div class="failure-badge badge-loss">$7.1M · Catastrophic</div>
+      </div>
+    </div>
+
+    <div class="failure-item">
+      <div class="failure-year">Июль 2025</div>
+      <div>
+        <div class="failure-title">Zelensky Suit Market</div>
+        <div class="failure-body">Изначально решено как YES. Затем через DVM (Data Verification Mechanism) переголосовано → NO. Контрарные трейдеры в итоге выиграли, но пережили несколько дней полной неопределённости и экстремальных P&L качелей.</div>
+      </div>
+      <div>
+        <div class="failure-badge badge-win">$14M · Reversed</div>
+      </div>
+    </div>
+
+    <div class="failure-item">
+      <div class="failure-year">Июнь 2024</div>
+      <div>
+        <div class="failure-title">Barron Trump / $DJT Memecoin</div>
+        <div class="failure-body">UMA проголосовал NO (фактически корректно). Polymarket публично не согласился с голосованием и <strong style="color:white;">выдал рефанды YES-держателям</strong>, overruling собственный oracle. Контрарные NO-трейдеры — корректные по факту и по oracle — потеряли из-за централизованного решения платформы.</div>
+      </div>
+      <div>
+        <div class="failure-badge badge-mixed">$1M+ · Platform Override</div>
+      </div>
+    </div>
+
+    <div class="failure-item">
+      <div class="failure-year">2022–23</div>
+      <div>
+        <div class="failure-title">Titan Submersible «Finding»</div>
+        <div class="failure-body">Спорный исход из-за размытых критериев резолюции. Что значит «найти» — обнаружить обломки или подтвердить судьбу людей? Нечёткая формулировка = дополнительный риск для любой стороны. Стал прецедентом для анализа wording перед входом в позицию.</div>
+      </div>
+      <div>
+        <div class="failure-badge badge-mixed">Wording Risk</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px; padding: 24px; border: 1px solid rgba(200,64,43,0.3); background: rgba(200,64,43,0.08); border-radius: 4px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:rgba(200,64,43,0.8); margin-bottom:10px;">⚠️ UMA Oracle — Структурный риск</div>
+    <div style="font-size:14px; color:rgba(255,255,255,0.7); line-height:1.65;">
+      Рынок Polymarket работает через UMA Optimistic Oracle: исход предлагается → 2-часовое окно оспаривания → при диспуте эскалация в DVM → 48–96 часов токен-взвешенного голосования. Концентрированное владение UMA-токенами создаёт риск манипуляции: один whale = 25% голосов (прецедент 2025). <strong style="color:white;">Любая контрарная позиция включает не только ставку на событие, но и ставку на честность процесса резолюции.</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 4 — STRATEGIES
+════════════════════════════════ -->
+<section class="section" id="strategies">
+  <div class="section-number">04 — Три контрарные стратегии</div>
+  <h2 class="section-head">Как извлекать прибыль<br>из байесов рынка</h2>
+  <p class="lead-text">От механики к практике. Каждая стратегия — с операционной логикой, профилем риска и задокументированными возможными доходностями.</p>
+
+  <!-- Strategy 1 -->
+  <div class="strategy-strip" style="margin-bottom: 2px;">
+    <div class="strategy-header" style="border-left: 4px solid #2bc87a;">
+      <div class="strategy-title-area">
+        <div class="strategy-num">I</div>
+        <div>
+          <div class="strategy-name">Short YES / Buy NO</div>
+          <div class="strategy-sub">Базовая контрарная стратегия против wishful thinking и FLB</div>
+        </div>
+      </div>
+      <span class="return-pill pill-green">до +900% на капитал</span>
+    </div>
+    <div class="strategy-body">
+      <div>
+        <div class="strategy-detail-label">Механика</div>
+        <div class="strategy-detail-text">Продавать YES или покупать NO когда crowd optimism надувает цену выше реальной вероятности. Целевая зона: YES = 5–15%. При YES = 10¢ и реальной вероятности 2–3% — NO стоит 90¢ с EV > $0.97. Исполнение: лимит-ордера на CLOB Polymarket или NO-контракты на Kalshi.</div>
+      </div>
+      <div>
+        <div class="strategy-detail-label">Риски</div>
+        <div class="strategy-detail-text">① Событие происходит → полная потеря позиции. ② UMA governance attack → резолюция против фактов (Ukraine minerals 2025). ③ Резолюционная двусмысленность → непредсказуемый исход. ④ Thin order book → высокий slippage.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strategy 2 -->
+  <div class="strategy-strip" style="margin-bottom: 2px;">
+    <div class="strategy-header" style="border-left: 4px solid var(--accent2);">
+      <div class="strategy-title-area">
+        <div class="strategy-num">II</div>
+        <div>
+          <div class="strategy-name">Resolution Risk Arbitrage</div>
+          <div class="strategy-sub">Ставка на расхождение резолюции между платформами</div>
+        </div>
+      </div>
+      <span class="return-pill pill-gold">редко, но кратно</span>
+    </div>
+    <div class="strategy-body">
+      <div>
+        <div class="strategy-detail-label">Механика</div>
+        <div class="strategy-detail-text">Противоположные позиции на разных платформах для одного события. Polymarket YES + Kalshi NO = прибыль при расхождении резолюции. Требует API и low-latency исполнения. Пример расхождения: Cardi B Halftime — Polymarket $1.00, Kalshi $0.26.</div>
+      </div>
+      <div>
+        <div class="strategy-detail-label">Риски</div>
+        <div class="strategy-detail-text">Главный риск — settlement divergence в другую сторону: превращает арбитраж в направленную ставку. Ukraine minerals: PM резолвился YES при отсутствии публичных данных — если Kalshi проголосовал NO, это стало бы потерей вместо арбитражной прибыли.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strategy 3 -->
+  <div class="strategy-strip">
+    <div class="strategy-header" style="border-left: 4px solid var(--gold);">
+      <div class="strategy-title-area">
+        <div class="strategy-num">III</div>
+        <div>
+          <div class="strategy-name">Fade the Chaos</div>
+          <div class="strategy-sub">Продавать в хайп-спайки на непроверенных слухах</div>
+        </div>
+      </div>
+      <span class="return-pill pill-red">малые, стабильные</span>
+    </div>
+    <div class="strategy-body">
+      <div>
+        <div class="strategy-detail-label">Механика</div>
+        <div class="strategy-detail-text">Когда YES резко растёт на слухе или неподтверждённой новости — немедленно продавать YES или покупать NO. Удерживать позицию 15–60 минут, закрывать при откате к pre-spike уровню. Требует: мониторинг Polymarket + Twitter/X в реальном времени + нулевые комиссии.</div>
+      </div>
+      <div>
+        <div class="strategy-detail-label">Риски</div>
+        <div class="strategy-detail-text">Слух оказывается правдой и становится перманентным сдвигом цены — тогда фейдер получает убыток на full spike. Пример высокого риска: фейдить здоровье лидера непосредственно перед официальным объявлением смерти.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 5 — SCORING FRAMEWORK (DARK)
+════════════════════════════════ -->
+<section class="section section-dark" id="framework">
+  <div class="section-number" style="color: rgba(255,255,255,0.3);">05 — Фреймворк идентификации</div>
+  <h2 class="section-head" style="color:white;">8-факторный скоринг<br>переоценённых рынков</h2>
+  <p class="lead-text">Первичный фильтр: YES цена в диапазоне 5–15%. Затем — набор вторичных сигналов. Score ≥ 16 = высококонфидентный кандидат на шорт.</p>
+
+  <div class="two-col">
+    <div>
+      <table class="score-table">
+        <thead>
+          <tr>
+            <th>Сигнал</th>
+            <th>Баллы</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="score-signal">Metaculus / Expert расхождение</div>
+              <div class="score-desc">Polymarket значимо выше медианы экспертного сообщества</div>
+            </td>
+            <td class="score-pts">+5–8</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">Kalshi расхождение</div>
+              <div class="score-desc">Polymarket выше аналогичного рынка на регулируемой бирже</div>
+            </td>
+            <td class="score-pts">+5–8</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">Single-source price spike</div>
+              <div class="score-desc">Резкий рост на одном непроверенном источнике</div>
+            </td>
+            <td class="score-pts">+4–6</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">Wording Ambiguity</div>
+              <div class="score-desc">Нечёткие критерии резолюции, субъективные формулировки</div>
+            </td>
+            <td class="score-pts">+4–6</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">Historical Base Rate Mismatch</div>
+              <div class="score-desc">Рыночная цена >> исторический base rate для класса событий</div>
+            </td>
+            <td class="score-pts">+3</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">UMA концентрация голосования</div>
+              <div class="score-desc">Whale с &gt;10% UMA токенов — governance risk высок</div>
+            </td>
+            <td class="score-pts">+3</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">Thin Order Book</div>
+              <div class="score-desc">Малая ликвидность = хрупкая и легко манипулируемая цена</div>
+            </td>
+            <td class="score-pts">+3</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="score-signal">Retail Sentiment Spike</div>
+              <div class="score-desc">Хайп в комментариях совпадает с ростом цены</div>
+            </td>
+            <td class="score-pts">+1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.3); margin-bottom:20px;">Пороги принятия решений</div>
+
+      <div style="margin-bottom: 16px; padding: 20px 24px; border: 1px solid rgba(43,200,122,0.3); background: rgba(43,200,122,0.06);">
+        <div style="font-family:'DM Serif Display',serif; font-size:28px; color:#4ade80; margin-bottom:6px;">Score ≥ 16</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.7);">Высокая конфиденция. Открывать позицию по правилам риск-менеджмента.</div>
+      </div>
+
+      <div style="margin-bottom: 16px; padding: 20px 24px; border: 1px solid rgba(200,150,43,0.3); background: rgba(200,150,43,0.06);">
+        <div style="font-family:'DM Serif Display',serif; font-size:28px; color:var(--gold); margin-bottom:6px;">Score 11–15</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.7);">Средняя конфиденция. Watchlist, мониторинг, возможно малая позиция.</div>
+      </div>
+
+      <div style="margin-bottom: 24px; padding: 20px 24px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03);">
+        <div style="font-family:'DM Serif Display',serif; font-size:28px; color:rgba(255,255,255,0.3); margin-bottom:6px;">Score &lt; 11</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.5);">Недостаточно сигналов. Пропускаем.</div>
+      </div>
+
+      <div style="padding: 20px 24px; border: 1px solid rgba(255,255,255,0.08); font-size:13px; color:rgba(255,255,255,0.5); line-height:1.6;">
+        Максимальный score: ~30 баллов. Фреймворк требует бэктестинга на 12–24 месяцах данных для калибровки весов и порогов.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 6 — PUTIN CASE STUDY
+════════════════════════════════ -->
+<section class="section" id="putin">
+  <div class="section-number">06 — Кейс · Путин вне власти до 31.12.2026</div>
+  <h2 class="section-head">Анализ рынка в прямом эфире</h2>
+  <p class="lead-text">По состоянию на 20 марта 2026. Parallel.ai Ultra Research — прямое применение фреймворка к реальному рынку.</p>
+
+  <div class="case-grid">
+    <div class="case-left">
+      <div class="case-metric">
+        <div class="case-metric-label">YES цена (Polymarket)</div>
+        <div class="case-metric-value accent">13%</div>
+        <div class="case-metric-sub">$0.13 за контракт</div>
+      </div>
+      <div class="case-metric">
+        <div class="case-metric-label">Metaculus медиана (эксперты)</div>
+        <div class="case-metric-value green">~3–5%</div>
+        <div class="case-metric-sub">Медиана выхода = май 2030</div>
+      </div>
+      <div class="case-metric">
+        <div class="case-metric-label">Historical Base Rate (Archigos)</div>
+        <div class="case-metric-value">3–12%</div>
+        <div class="case-metric-sub">Автократы со схожим профилем</div>
+      </div>
+      <div class="case-metric">
+        <div class="case-metric-label">Объём торгов</div>
+        <div class="case-metric-value">$2.9M</div>
+        <div class="case-metric-sub">~$65K дневной объём</div>
+      </div>
+      <div class="case-metric">
+        <div class="case-metric-label">Ликвидность в стакане</div>
+        <div class="case-metric-value">$217K</div>
+        <div class="case-metric-sub">UMA OptimisticOracle v3</div>
+      </div>
+    </div>
+
+    <div class="case-right">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:16px;">Сравнение прогнозов</div>
+
+      <div class="comparison-bar-group">
+        <div class="comp-label">Polymarket YES — текущий рынок</div>
+        <div class="chart-label" style="font-size:12px;"><span></span><span style="color:var(--gold);">13%</span></div>
+        <div class="chart-bar" style="background: rgba(0,0,0,0.06);">
+          <div class="chart-fill fill-neg" style="width:13%; opacity:0.9;"></div>
+        </div>
+      </div>
+
+      <div class="comparison-bar-group">
+        <div class="comp-label">Metaculus experts (медиана)</div>
+        <div class="chart-label" style="font-size:12px;"><span></span><span style="color:#16a34a;">~4%</span></div>
+        <div class="chart-bar" style="background: rgba(0,0,0,0.06);">
+          <div class="chart-fill fill-pos" style="width:4%;"></div>
+        </div>
+      </div>
+
+      <div class="comparison-bar-group">
+        <div class="comp-label">Archigos base rate</div>
+        <div class="chart-label" style="font-size:12px;"><span></span><span style="color:var(--accent2);">~7%</span></div>
+        <div class="chart-bar" style="background: rgba(0,0,0,0.06);">
+          <div class="chart-fill" style="width:7%; background:var(--accent2);"></div>
+        </div>
+      </div>
+
+      <div style="margin: 24px 0 16px; font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted);">Скоринг по фреймворку</div>
+
+      <div style="display:grid; grid-template-columns: 1fr auto; gap: 8px; font-size:13px; margin-bottom: 20px;">
+        <div style="color:var(--muted);">Metaculus расхождение</div><div style="font-family:'JetBrains Mono',monospace; color:#16a34a; font-weight:700;">+7</div>
+        <div style="color:var(--muted);">Base Rate Mismatch</div><div style="font-family:'JetBrains Mono',monospace; color:#16a34a; font-weight:700;">+6</div>
+        <div style="color:var(--muted);">Wording Ambiguity («credible reporting»)</div><div style="font-family:'JetBrains Mono',monospace; color:var(--gold); font-weight:700;">+5</div>
+        <div style="color:var(--muted);">UMA Governance Risk</div><div style="font-family:'JetBrains Mono',monospace; color:var(--gold); font-weight:700;">+3</div>
+        <div style="color:var(--muted);">Retail Sentiment</div><div style="font-family:'JetBrains Mono',monospace; color:var(--muted); font-weight:700;">+2</div>
+        <div style="color:var(--ink); font-weight:600; border-top:1px solid var(--border); padding-top:8px; margin-top:4px;">ИТОГО</div>
+        <div style="font-family:'DM Serif Display',serif; font-size:26px; color:var(--accent); border-top:1px solid var(--border); padding-top:4px; margin-top:4px;">23/30</div>
+      </div>
+
+      <div class="verdict-panel">
+        <div class="verdict-label">Вердикт Parallel.ai Ultra</div>
+        <div class="verdict-text">YES-цена 13% <strong>«plausibly inflated»</strong> — умеренная конфиденция. Рекомендация: позиция &lt;$5–20K, лимит-ордера, strict stop-loss. Conseverative traders — избегать из-за UMA risk. Структурные факторы против выхода Путина: 74 года, переизбран до 2030, контроль силовых структур.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 7 — PLATFORMS
+════════════════════════════════ -->
+<section class="section" style="background: white;" id="platforms">
+  <div class="section-number">07 — Сравнение платформ</div>
+  <h2 class="section-head">Polymarket vs Kalshi<br>vs Metaculus</h2>
+  <p class="lead-text">Разные механизмы резолюции = разные риски и типы байесов. Расхождение между платформами — само по себе торговый сигнал.</p>
+
+  <table class="platform-table">
+    <thead>
+      <tr>
+        <th>Параметр</th>
+        <th>Polymarket</th>
+        <th>Kalshi</th>
+        <th>Metaculus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Резолюция</td>
+        <td class="td-red td-mono">UMA Oracle (token-weighted)</td>
+        <td class="td-green td-mono">CFTC regulated committee</td>
+        <td class="td-mono" style="color:var(--accent2);">Community moderators</td>
+      </tr>
+      <tr>
+        <td>Governance risk</td>
+        <td class="td-red">Высокий — whale manipulation задокументирована</td>
+        <td class="td-green">Низкий — регулируемый процесс</td>
+        <td style="color:var(--muted);">Нет (некоммерческий)</td>
+      </tr>
+      <tr>
+        <td>Аудитория</td>
+        <td>Retail crypto, pseudo-anon</td>
+        <td>KYC US retail + institutional</td>
+        <td>Эксперты, reputation-driven</td>
+      </tr>
+      <tr>
+        <td>Комиссии</td>
+        <td class="td-green">0% (многие рынки)</td>
+        <td class="td-gold">Maker-taker, price-weighted</td>
+        <td style="color:var(--muted);">Нет ставок</td>
+      </tr>
+      <tr>
+        <td>Ликвидность</td>
+        <td class="td-gold">Тонкая, высокий slippage</td>
+        <td class="td-green">Глубже (MM программы)</td>
+        <td style="color:var(--muted);">Нет ставок</td>
+      </tr>
+      <tr>
+        <td>Байес YES-asymmetry</td>
+        <td class="td-red">Максимальная — retail + эмоциональные рынки</td>
+        <td class="td-gold">Умеренная — более профессиональная аудитория</td>
+        <td class="td-green">Минимальная — accuracy score мотивация</td>
+      </tr>
+      <tr>
+        <td>Использование</td>
+        <td>Основная арена для Short YES</td>
+        <td>Арбитраж + hedge позиции</td>
+        <td>Benchmark — эталон вместо wishful thinking</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 28px; padding: 20px 24px; background: rgba(43,95,200,0.06); border: 1px solid rgba(43,95,200,0.2); border-radius: 4px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--accent2); margin-bottom:8px;">💡 Правило расхождения</div>
+    <div style="font-size:14px; color:var(--ink); line-height:1.65;">Polymarket YES значимо выше Metaculus медианы → wishful thinking сигнал. Polymarket YES значимо выше Kalshi → UMA governance premium. Оба сигнала одновременно → максимальная конфиденция шорта YES на Polymarket.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 8 — RISK MANAGEMENT
+════════════════════════════════ -->
+<section class="section section-dark">
+  <div class="section-number" style="color: rgba(255,255,255,0.3);">08 — Риск-менеджмент</div>
+  <h2 class="section-head" style="color:white;">Как не потерять всё<br>даже когда ты прав</h2>
+  <p class="lead-text">Правота по факту + дефектная резолюция = потеря. UMA governance risk — уникальная угроза, которой нет в традиционных рынках.</p>
+
+  <div class="risk-grid">
+    <div class="risk-cell">
+      <div class="risk-cell-label">Sizing</div>
+      <div class="risk-cell-title">0.5% – 3% на событие</div>
+      <div class="risk-cell-body">От общего портфеля. Для longshot зоны — ещё меньше. Fractional Kelly (0.2×) — рекомендован. Позиция не должна причинять реальной боли при полной потере.</div>
+    </div>
+    <div class="risk-cell">
+      <div class="risk-cell-label">Time Stop — Fade the Chaos</div>
+      <div class="risk-cell-title">Закрыть через 15–60 мин</div>
+      <div class="risk-cell-body">Независимо от P&L. Нельзя удерживать спайк-шорт в ожидании подтверждения слуха. Если слух подтвердился — фейдер проиграл и должен зафиксировать убыток немедленно.</div>
+    </div>
+    <div class="risk-cell">
+      <div class="risk-cell-label">Читать Wording</div>
+      <div class="risk-cell-title">Дословно. До входа.</div>
+      <div class="risk-cell-body">«Consensus of credible reporting», «in some way», «official information» — всё это субъективные формулировки, создающие риск нестандартной резолюции. Чёткая формулировка = меньший governance risk.</div>
+    </div>
+    <div class="risk-cell">
+      <div class="risk-cell-label">UMA Governance</div>
+      <div class="risk-cell-title">Мониторить концентрацию</div>
+      <div class="risk-cell-body">Если один кошелёк &gt;10% UMA голосов — риск критически высок. Ukraine minerals 2025: 25% у одного whale. Применять «governance risk penalty» к расчёту EV позиции.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 9 — ACADEMIC REFS
+════════════════════════════════ -->
+<section class="section" id="refs">
+  <div class="section-number">09 — Академическая база · 101 источник</div>
+  <h2 class="section-head">Ключевые исследования</h2>
+  <p class="lead-text">Parallel.ai Ultra синтезировал 101 источник. Пять ключевых академических работ, на которые опирается фреймворк.</p>
+
+  <div>
+    <div class="ref-strip">
+      <div class="ref-cite">Bürgi, Deng &<br>Whelan (2026)</div>
+      <div class="ref-finding"><strong>Kalshi 2021–2025, транзакционные данные.</strong> Контракты &lt;10¢ → убыток 60%+ для инвесторов. Первое крупное академическое подтверждение FLB на современном регулируемом рынке. Directly confirms: красная зона 5–15% — систематически переоценена.</div>
+    </div>
+    <div class="ref-strip">
+      <div class="ref-cite">Seybert &<br>Bloomfield,<br>Management Science</div>
+      <div class="ref-finding"><strong>«Contagion of Wishful Thinking in Markets.»</strong> Лабораторное доказательство механизма: wishful betting заразно. Наблюдатели интерпретируют предпочтения как информацию → цена YES растёт выше реальной вероятности. Объясняет YES-asymmetry в геополитических рынках.</div>
+    </div>
+    <div class="ref-strip">
+      <div class="ref-cite">Snowberg &<br>Wolfers (2008,<br>2010) + Thaler<br>& Ziemba</div>
+      <div class="ref-finding"><strong>Канонический FLB в классических ставочных рынках.</strong> Лонгшоты систематически overbet, фавориты underbet. Причина — когнитивные искажения вероятности (probability weighting), а не только risk preference. Теоретическая основа всего фреймворка.</div>
+    </div>
+    <div class="ref-strip">
+      <div class="ref-cite">Motivated<br>Reasoning in<br>Financial Markets<br>(RAS, 2023)</div>
+      <div class="ref-finding"><strong>Асимметрия убеждений Long vs Short.</strong> Long-holders: систематически завышенные прогнозы. Short-holders: объективные прогнозы. Структурное преимущество шорта: трейдер в NO-позиции смотрит на мир трезвее, чем большинство рынка.</div>
+    </div>
+    <div class="ref-strip">
+      <div class="ref-cite">PMC (2023):<br>Prediction vs<br>Probability Format</div>
+      <div class="ref-finding"><strong>Дизайн платформы усиливает байес.</strong> Бинарный YES/NO (Polymarket) → больший wishful thinking, чем непрерывная вероятностная шкала (Metaculus). Интерфейс платформы — не нейтральный: он структурно усиливает YES-смещение у retail-аудитории.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     SECTION 10 — ACTION PLAN
+════════════════════════════════ -->
+<section class="section" style="background:white;" id="actions">
+  <div class="section-number">10 — План действий</div>
+  <h2 class="section-head">Что делать<br>прямо сейчас</h2>
+  <p class="lead-text">Пять конкретных шагов для запуска контрарной стратегии. В порядке приоритета.</p>
+
+  <div>
+    <div class="action-item">
+      <div class="action-num">01</div>
+      <div>
+        <div class="action-title">Настроить мониторинг красной зоны</div>
+        <div class="action-body">Отфильтровать Polymarket по геополитическим рынкам с YES = 5–15%. Настроить ежедневный алёрт. Особый фокус: смена власти, выход из должности, военные события — именно там wishful thinking наиболее силён.</div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-num">02</div>
+      <div>
+        <div class="action-title">Для каждого кандидата — применить фреймворк</div>
+        <div class="action-body">Проверить Metaculus медиану → Kalshi аналог → Archigos base rate → прочитать формулировку резолюции дословно → оценить UMA концентрацию. Считать score. Если &lt;11 — пропускаем, 11–15 — watchlist, ≥16 — рассматривать позицию.</div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-num">03</div>
+      <div>
+        <div class="action-title">Путин-рынок: рассмотреть позицию</div>
+        <div class="action-body">Score 23/30. YES 13% vs Metaculus ~4%. Рекомендуемый размер: &lt;$5–20K. Лимит-ордера (не market). Мониторить UMA governance weekly. При подозрении на whale активность — немедленный выход. Conservative traders — пропустить из-за UMA risk.</div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-num">04</div>
+      <div>
+        <div class="action-title">Протестировать «Fade the Chaos» на малых позициях</div>
+        <div class="action-body">Выбрать высоколиквидный рынок. При резком YES-спайке на слухе — продавать YES с тайм-стопом 30 минут. Накапливать данные: какой % спайков откатывается? Это входные данные для backtesting стратегии.</div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-num">05</div>
+      <div>
+        <div class="action-title">Запустить backtesting на исторических данных</div>
+        <div class="action-body">12–24 месяца данных Polymarket. Применить фреймворк ретроспективно. Измерить: Hit Rate (% правильных шортов), средний ROI, Sharpe, max drawdown. Сравнить с Metaculus прогнозами через Brier score. Результат: откалиброванные веса и пороги.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div>
+    <div class="footer-left">Байесы Оптимизма<br>2026 Research</div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.4); margin-top:8px; font-family:'JetBrains Mono',monospace;">BK Research · Parallel.ai Ultra · 101 sources</div>
+  </div>
+  <div class="footer-meta">
+    <div>20 марта 2026</div>
+    <div>Parallel.ai Ultra — 19 минут deep research</div>
+    <div>14 аналитических секций · 101 источник</div>
+    <a class="footer-link" href="https://bkproduct.github.io/bk-demos/presentations/prediction-markets-scroll.html">
+      github.com/BKproduct/bk-demos →
+    </a>
+  </div>
+</footer>
+
+<script>
+  // Progress bar
+  const progressLine = document.getElementById('progressLine');
+  window.addEventListener('scroll', () => {
+    const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    progressLine.style.width = scrolled + '%';
+  });
+
+  // Nav dots
+  const sections = ['hero','biases','evidence','failures','strategies','framework','putin','platforms','refs','actions'];
+  const dots = document.querySelectorAll('.nav-dot');
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      const target = document.getElementById(sections[i]);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const updateActiveDot = () => {
+    let active = 0;
+    sections.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight / 2) active = i;
+    });
+    dots.forEach((d, i) => d.className = 'nav-dot' + (i === active ? ' active' : ''));
+  };
+
+  window.addEventListener('scroll', updateActiveDot, { passive: true });
+</script>
+</body>
+</html>
