@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthCopilot — Precision Health for Aesthetic Clinics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0D1B3E;
+            --slate: #1E293B;
+            --teal: #0D9488;
+            --amber: #F59E0B;
+            --text: #E2E8F0;
+            --card: #1E293B;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--navy);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--teal), var(--amber));
+            width: 0%;
+            z-index: 1000;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: rgba(13, 27, 62, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(15, 148, 136, 0.2);
+            z-index: 100;
+            padding: 0 2rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--teal);
+            border-bottom-color: var(--teal);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(15, 148, 136, 0.1), rgba(245, 158, 11, 0.05));
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            color: var(--teal);
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: var(--text);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--teal);
+            color: var(--navy);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid var(--teal);
+        }
+
+        .cta-button:hover {
+            background: transparent;
+            color: var(--teal);
+        }
+
+        /* Section */
+        section {
+            padding: 6rem 0;
+            border-top: 1px solid rgba(15, 148, 136, 0.1);
+        }
+
+        section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 3rem;
+            color: var(--teal);
+        }
+
+        section h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--amber);
+            margin: 2rem 0 1rem 0;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--teal);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-left-color: var(--amber);
+            background: rgba(15, 148, 136, 0.1);
+        }
+
+        .card h4 {
+            color: var(--amber);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        /* Data Display */
+        .data-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid var(--teal);
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: bold;
+            color: var(--amber);
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: rgba(226, 232, 240, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: var(--card);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(15, 148, 136, 0.2);
+            padding: 1rem;
+            text-align: left;
+            color: var(--teal);
+            font-weight: 600;
+            border-bottom: 1px solid rgba(15, 148, 136, 0.3);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(15, 148, 136, 0.1);
+        }
+
+        tr:hover {
+            background: rgba(15, 148, 136, 0.05);
+        }
+
+        /* Highlight Box */
+        .highlight {
+            background: rgba(15, 148, 136, 0.15);
+            border-left: 4px solid var(--teal);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            font-size: 1.1rem;
+        }
+
+        .highlight.warning {
+            background: rgba(245, 158, 11, 0.15);
+            border-left-color: var(--amber);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0 2rem 3rem;
+        }
+
+        .timeline-item {
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--teal);
+            border-radius: 50%;
+            border: 3px solid var(--navy);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 12px;
+            width: 2px;
+            height: calc(100% + 20px);
+            background: rgba(15, 148, 136, 0.3);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-item strong {
+            color: var(--amber);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(13, 27, 62, 0.5);
+            border-top: 1px solid rgba(15, 148, 136, 0.2);
+            padding: 3rem 0;
+            text-align: center;
+            margin-top: 4rem;
+            color: rgba(226, 232, 240, 0.6);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 0.5rem;
+            }
+
+            nav a {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 3rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <nav>
+        <ul>
+            <li><a href="#problem" class="nav-link">Problem</a></li>
+            <li><a href="#market" class="nav-link">Market</a></li>
+            <li><a href="#solution" class="nav-link">Solution</a></li>
+            <li><a href="#system" class="nav-link">System</a></li>
+            <li><a href="#results" class="nav-link">Results</a></li>
+            <li><a href="#partnership" class="nav-link">Partnership</a></li>
+            <li><a href="#timeline" class="nav-link">Timeline</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <h1>HealthCopilot</h1>
+            <p>Precision Health Intelligence for Aesthetic Clinics</p>
+            <p style="font-size: 1.1rem; color: rgba(226, 232, 240, 0.8); margin-bottom: 2rem;">Turn patient data into competitive advantage</p>
+            <a href="#problem" class="cta-button">Explore</a>
+        </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section id="problem">
+        <div class="container">
+            <h2>The Problem: Siloed Patient Data</h2>
+
+            <p style="font-size: 1.1rem; margin-bottom: 2rem;">Today's reality in aesthetic clinics:</p>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>Data Fragmentation</h4>
+                    <p>Blood tests, wearables, DNA tests, nutrition logs — all in different places. No unified view of your patient.</p>
+                </div>
+                <div class="card">
+                    <h4>Time Waste</h4>
+                    <p>Doctor spends 10 mins writing prescriptions from incomplete info. Missing context equals generic advice.</p>
+                </div>
+                <div class="card">
+                    <h4>Generic Advice</h4>
+                    <p>Patients follow generic tips (take omega-3, sleep more, drink water) that may not apply to them at all.</p>
+                </div>
+                <div class="card">
+                    <h4>Missed Revenue</h4>
+                    <p>No way to identify which patients need what — lost upsell opportunities from personalized treatments.</p>
+                </div>
+            </div>
+
+            <div class="highlight warning">
+                Each patient visit operates below potential. Doctors work blind. Patients don't get personalized care. Revenue sits on the table.
+            </div>
+        </div>
+    </section>
+
+    <!-- MARKET -->
+    <section id="market">
+        <div class="container">
+            <h2>Market Opportunity</h2>
+
+            <div class="data-row">
+                <div class="metric">
+                    <div class="metric-label">Aesthetic Clinic Patient Base</div>
+                    <div class="metric-value">100+</div>
+                    <p>high-value clients per clinic</p>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Annual Spend per Patient</div>
+                    <div class="metric-value">£5K–20K</div>
+                    <p>beauty + health services</p>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Wearable Adoption</div>
+                    <div class="metric-value">40–60%</div>
+                    <p>wear Apple Watch, Oura, Whoop</p>
+                </div>
+            </div>
+
+            <p style="font-size: 1.1rem; margin: 2rem 0;">Your clinic has everything needed:</p>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>In-House Lab</h4>
+                    <p>You already draw blood tests. We integrate with your existing workflows.</p>
+                </div>
+                <div class="card">
+                    <h4>Premium Equipment</h4>
+                    <p>IV drips, aesthetic procedures, wearables monitoring. Health data is your natural edge.</p>
+                </div>
+                <div class="card">
+                    <h4>Health-Conscious Clientele</h4>
+                    <p>Patients invest in appearance and longevity. They already track health metrics.</p>
+                </div>
+                <div class="card">
+                    <h4>Boutique Location</h4>
+                    <p>Marble Arch, London. Affluent, educated demographic. Perfect early-adopter base.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTION -->
+    <section id="solution">
+        <div class="container">
+            <h2>Our Solution: AI-Powered Health Intelligence</h2>
+
+            <p style="font-size: 1.1rem; margin-bottom: 2rem;">HealthCopilot ingests all patient data and produces:</p>
+
+            <h3>For Patients</h3>
+            <ul style="margin: 1rem 0 2rem 2rem; font-size: 1.05rem;">
+                <li>Personalized health briefing — what they actually need (not generic tips)</li>
+                <li>Genetic insights — why they respond to meds/supplements differently</li>
+                <li>Biological age tracking — measurable progress toward longevity</li>
+                <li>Daily actionable recommendations — diet, exercise, supplements tailored to their genetics</li>
+            </ul>
+
+            <h3>For Your Clinic</h3>
+            <ul style="margin: 1rem 0 2rem 2rem; font-size: 1.05rem;">
+                <li>One-page patient brief before appointment — full context in 2 minutes</li>
+                <li>Identify high-value patients — who's invested in longevity? Who will spend?</li>
+                <li>White-label service — offer HealthCopilot as premium add-on to clients</li>
+                <li>Recurring revenue — subscription model (£30–50/patient/month) split 50/50 with platform</li>
+            </ul>
+
+            <div class="highlight">
+                Unlike ChatGPT or consumer apps, HealthCopilot uses only Grade-A peer-reviewed science and personal data. No hallucinations. Doctor-ready reports.
+            </div>
+        </div>
+    </section>
+
+    <!-- SYSTEM -->
+    <section id="system">
+        <div class="container">
+            <h2>System Architecture: Four-Agent Consortium</h2>
+
+            <p style="font-size: 1.05rem; margin-bottom: 2rem;">Patient inputs: blood tests, DNA, wearables, nutrition diary, symptoms</p>
+
+            <table>
+                <tr>
+                    <th>Agent</th>
+                    <th>What It Does</th>
+                    <th>Output</th>
+                </tr>
+                <tr>
+                    <td><strong>Clinical Geneticist</strong></td>
+                    <td>Analyzes DNA. Which genes are variants? What do they mean for health?</td>
+                    <td>Genetic report + predispositions</td>
+                </tr>
+                <tr>
+                    <td><strong>Pharmacogenomicist</strong></td>
+                    <td>Cross-references meds + genes. Will this drug work? Is it safe?</td>
+                    <td>Drug-gene interaction warnings</td>
+                </tr>
+                <tr>
+                    <td><strong>Nutritionist</strong></td>
+                    <td>Analyzes diet + genes. Which foods/supplements help?</td>
+                    <td>Personalized nutrition plan</td>
+                </tr>
+                <tr>
+                    <td><strong>Biostatistician</strong></td>
+                    <td>Validates outputs. Are they backed by enough evidence?</td>
+                    <td>Confidence score + flags weak claims</td>
+                </tr>
+            </table>
+
+            <div class="highlight">
+                Doctor receives: One-page brief with patient's genetic risks, medication warnings, nutrition blind spots, biological age. All backed by peer-reviewed sources.
+            </div>
+        </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results">
+        <div class="container">
+            <h2>Real Case Study: Boris (from Our Pilot)</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>Genetic Finding</h4>
+                    <p>Lipid metabolism variant → higher cardiovascular risk → needs low saturated fat diet</p>
+                </div>
+                <div class="card">
+                    <h4>Drug Warning</h4>
+                    <p>Warfarin sensitivity detected → would cause complications. Recommends alternatives (apixaban, rivaroxaban)</p>
+                </div>
+                <div class="card">
+                    <h4>Nutrition Insight</h4>
+                    <p>Omega-3 supplementation = useless (and risky). Iron absorption requires Vitamin D + K2 together.</p>
+                </div>
+                <div class="card">
+                    <h4>Measurable Result</h4>
+                    <p>17% cholesterol reduction in 3 months. Biological age 47 (actual age 51). Daily tracking shows improvement.</p>
+                </div>
+            </div>
+
+            <div class="highlight">
+                Generic advice (take omega-3, sleep more, drink water) would have been wrong. Personalization matters.
+            </div>
+        </div>
+    </section>
+
+    <!-- PARTNERSHIP -->
+    <section id="partnership">
+        <div class="container">
+            <h2>Partnership Model: White-Label Subscription</h2>
+
+            <h3>How It Works</h3>
+            <ol style="margin: 1rem 0 2rem 2rem; font-size: 1.05rem;">
+                <li>Patients consent to share blood test + wearable data with HealthCopilot</li>
+                <li>They receive monthly personalized health brief delivered to clinic and them</li>
+                <li>Clinic charges patients £30–50/month; splits revenue 50/50 with platform</li>
+                <li><strong>Your clinic's revenue: ~£15–25 per patient per month</strong></li>
+            </ol>
+
+            <h3>The Numbers</h3>
+            <table>
+                <tr>
+                    <th>Scenario</th>
+                    <th>Patients</th>
+                    <th>Monthly Fee</th>
+                    <th>Clinic Share (50%)</th>
+                    <th>Annual Revenue</th>
+                </tr>
+                <tr>
+                    <td>Conservative (Year 1)</td>
+                    <td>15–20</td>
+                    <td>£30</td>
+                    <td>£15</td>
+                    <td>£2,700–3,600</td>
+                </tr>
+                <tr>
+                    <td>Moderate (Year 2)</td>
+                    <td>40–50</td>
+                    <td>£40</td>
+                    <td>£20</td>
+                    <td>£9,600–12,000</td>
+                </tr>
+                <tr>
+                    <td>Aggressive (Year 3)</td>
+                    <td>100+</td>
+                    <td>£40</td>
+                    <td>£20</td>
+                    <td>£24,000+</td>
+                </tr>
+            </table>
+
+            <div class="highlight">
+                Plus: Patients who engage with HealthCopilot spend 30–50% more on clinic services (IV drips, treatments, follow-ups). Indirect revenue often 2–3x direct subscription.
+            </div>
+        </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section id="timeline">
+        <div class="container">
+            <h2>Pilot Timeline: 2–3 Months</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <strong>Week 1–2: Setup</strong>
+                    <p>Identify 15–20 health-conscious patients. Get consent forms. Integrate with your lab data system.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <strong>Week 3–12: Active Pilot</strong>
+                    <p>Patients receive monthly briefs. Doctors use in appointments. Track engagement metrics.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <strong>Week 13–14: Review</strong>
+                    <p>Analyze results. Decide: scale to full clinic, modify, or conclude.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <strong>Ongoing: Monthly Check-In</strong>
+                    <p>30-minute calls to discuss engagement, doctor feedback, perceived value.</p>
+                </div>
+            </div>
+
+            <div class="highlight warning">
+                Zero upfront cost. Revenue-share only: you make money if patients find it valuable enough to pay.
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="text-align: center; padding: 4rem 0;">
+        <div class="container">
+            <h2>Ready to Explore?</h2>
+            <p style="font-size: 1.1rem; margin: 2rem 0;">This isn't hypothetical. The system works. We need to prove it in your clinic.</p>
+            <p style="font-size: 1.1rem; margin: 2rem 0;">Let's run a 2-month pilot with your health-conscious patients and measure the results.</p>
+            <a href="mailto:boris.korol@ai-automation.studio?subject=HealthCopilot%20Pilot%20-%20Let's%20Discuss" class="cta-button">Start Conversation</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>HealthCopilot — Precision Health Intelligence for Clinics</p>
+        <p style="margin-top: 1rem;">Contact: @BKproduct (Telegram) | boris.korol@ai-automation.studio</p>
+    </footer>
+
+    <script>
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.querySelector('.progress-bar').style.width = scrollPercent + '%';
+        });
+
+        // Active nav link
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
