@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When the Crowd Is Wrong — Contrarian Strategies in Prediction Markets</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #111111;
+    --border: #222222;
+    --gold: #C9A84C;
+    --gold-dim: rgba(201,168,76,0.15);
+    --red: #E63946;
+    --green: #2EC4B6;
+    --text: #F0EDE8;
+    --muted: #888888;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    overflow: hidden;
+  }
+
+  /* ── DECK ── */
+  .deck {
+    width: 100vw; height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 64px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1);
+    transform: translateY(24px);
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+  .slide.exit {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active { background: var(--gold); width: 24px; border-radius: 3px; }
+
+  .nav-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .slide-counter {
+    position: fixed;
+    top: 32px; right: 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    z-index: 100;
+  }
+
+  /* ── COMPONENTS ── */
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-bottom: 32px;
+    display: inline-block;
+  }
+
+  .big-number {
+    font-family: var(--display);
+    font-size: clamp(80px, 12vw, 160px);
+    line-height: 1;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+  .big-number.red { color: var(--red); }
+  .big-number.green { color: var(--green); }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-align: center;
+    max-width: 900px;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(32px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  p, li {
+    font-size: clamp(14px, 1.5vw, 18px);
+    line-height: 1.65;
+    color: var(--text);
+    max-width: 720px;
+  }
+
+  .subtitle {
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--muted);
+    text-align: center;
+    max-width: 680px;
+    line-height: 1.6;
+    margin-top: 20px;
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; width: 100%; max-width: 1000px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; width: 100%; max-width: 1100px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; max-width: 1100px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+  }
+  .card.red::before { background: var(--red); }
+  .card.green::before { background: var(--green); }
+
+  .card-num {
+    font-family: var(--display);
+    font-size: 48px;
+    line-height: 1;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .card-num.red { color: var(--red); }
+  .card-num.green { color: var(--green); }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .card-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── TABLE ── */
+  .data-table {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .red-cell { color: var(--red) !important; font-weight: 600; }
+  .green-cell { color: var(--green) !important; font-weight: 600; }
+  .gold-cell { color: var(--gold) !important; font-weight: 600; }
+
+  /* ── BIAS BADGE ── */
+  .bias-list { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 800px; }
+  .bias-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 24px;
+  }
+  .bias-icon {
+    font-family: var(--display);
+    font-size: 32px;
+    color: var(--gold);
+    min-width: 60px;
+    line-height: 1;
+  }
+  .bias-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .bias-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── STRATEGY ── */
+  .strategy-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .return-badge {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--green);
+  }
+  .strategy-title { font-weight: 600; font-size: 16px; }
+  .strategy-desc { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .strategy-action {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── TIMELINE (Failures) ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 820px; }
+  .timeline-item {
+    display: flex;
+    gap: 24px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .timeline-year {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    min-width: 64px;
+    padding-top: 2px;
+  }
+  .timeline-event { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .timeline-detail { font-size: 13px; color: var(--muted); }
+  .timeline-verdict {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 0.05em;
+    padding-top: 2px;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* ── SLIDE-SPECIFIC ── */
+
+  /* 1 — TITLE */
+  #s1 {
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  }
+  #s1 .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+  #s1 .source-line {
+    margin-top: 48px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  #s1 .source-line a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  #s1 .source-line a:hover { border-color: var(--gold); }
+
+  /* 2 — OVERVIEW STAT */
+  #s2 .stat-row {
+    display: flex;
+    gap: 64px;
+    align-items: flex-end;
+    margin-bottom: 48px;
+  }
+  #s2 .stat-item { display: flex; flex-direction: column; align-items: center; }
+  #s2 .stat-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--muted); margin-top: 8px; text-transform: uppercase; }
+
+  /* 8 — TOOLKIT */
+  #s9 .tool-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+  }
+  #s9 .tool-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  #s9 .tool-pill span { color: var(--gold); }
+
+  /* ── SCAN LINE overlay ── */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.05) 2px,
+      rgba(0,0,0,0.05) 4px
+    );
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+    z-index: 200;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 48px; height: 1px;
+    background: var(--gold);
+    margin: 24px auto;
+  }
+
+  .align-left { align-items: flex-start; }
+  .text-left { text-align: left; }
+
+  .logo-area {
+    position: fixed;
+    top: 32px; left: 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    z-index: 100;
+  }
+  .logo-area strong { color: var(--gold); }
+
+  @media (max-width: 768px) {
+    .slide { padding: 32px 24px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    #s1 .source-line { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+<div class="progress-bar" id="progress"></div>
+
+<div class="logo-area"><strong>Boris Korol</strong> · Research 2026</div>
+<div class="slide-counter" id="counter">01 / 10</div>
+
+<div class="deck" id="deck">
+
+  <!-- ══ SLIDE 1 — TITLE ══ -->
+  <div class="slide active" id="s1">
+    <p class="eyebrow">Prediction Markets · Behavioral Finance · 2026</p>
+    <h1>WHEN THE<br>CROWD IS<br>WRONG</h1>
+    <p class="subtitle">Cognitive biases, excessive optimism, and<br>contrarian strategies for 2x–10x returns</p>
+    <div class="source-line">
+      <span>Research: Gemini Deep Research · Apify · Swift Centre · NBER</span>
+      <span>·</span>
+      <a href="https://github.com/BKproduct" target="_blank">github.com/BKproduct</a>
+      <span>·</span>
+      <span>Mar 20, 2026</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2 — CORE INSIGHT ══ -->
+  <div class="slide" id="s2">
+    <div class="tag">The Core Finding</div>
+    <div class="stat-row">
+      <div class="stat-item">
+        <div class="big-number red">43¢</div>
+        <div class="stat-label">Return per $1 on &lt;15% contracts</div>
+      </div>
+      <div class="stat-item">
+        <div class="big-number">76%</div>
+        <div class="stat-label">of the time experts beat Polymarket</div>
+      </div>
+      <div class="stat-item">
+        <div class="big-number">3–4×</div>
+        <div class="stat-label">typical market overpricing of longshots</div>
+      </div>
+    </div>
+    <p class="subtitle">Polymarket events priced at 5–15% occur significantly less often than implied.<br>Kalshi calibration study, 292 million trades (2025).</p>
+  </div>
+
+  <!-- ══ SLIDE 3 — 4 BIASES ══ -->
+  <div class="slide" id="s3">
+    <div class="tag">4 Biases That Cause Overpricing</div>
+    <div class="bias-list">
+      <div class="bias-item">
+        <div class="bias-icon">01</div>
+        <div>
+          <div class="bias-name">Favorite-Longshot Bias</div>
+          <div class="bias-desc">Traders systematically overpay for low-probability events. Contracts under 15% return 43 cents per dollar — worse than slot machines (93¢). Source: NBER WP #15923, Kalshi 292M trades.</div>
+        </div>
+      </div>
+      <div class="bias-item">
+        <div class="bias-icon">02</div>
+        <div>
+          <div class="bias-name">YES-Asymmetry / "Optimism Tax"</div>
+          <div class="bias-desc">Takers systematically prefer "Yes" bets on longshot events. Makers (sellers) collect this structural tax. Source: Becker 2025, arXiv.</div>
+        </div>
+      </div>
+      <div class="bias-item">
+        <div class="bias-icon">03</div>
+        <div>
+          <div class="bias-name">Wishful Thinking + Narrative Fallacy</div>
+          <div class="bias-desc">Geopolitical markets: traders pay a premium to see the outcome they want — regime change, revolution, ceasefire. Price becomes a proxy for desire, not probability.</div>
+        </div>
+      </div>
+      <div class="bias-item">
+        <div class="bias-icon">04</div>
+        <div>
+          <div class="bias-name">Availability Bias (Contagion)</div>
+          <div class="bias-desc">Post-Wagner Mutiny (2023), post-Iran strike (Feb 2026): dramatic events inflate perceived probability for 2–3 months. Market holds elevated prices long after the signal fades.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4 — EXPERTS vs MARKET ══ -->
+  <div class="slide" id="s4">
+    <div class="tag">Experts vs Market — Swift Centre, Jan 2026</div>
+    <h2>Markets Overprice<br>Geopolitical Disruption<br>by 2–3×</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Polymarket</th>
+          <th>Superforecasters</th>
+          <th>Overpricing</th>
+          <th>Trade</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Russia–Ukraine ceasefire 2026</td>
+          <td class="red-cell">43%</td>
+          <td class="green-cell">22%</td>
+          <td class="gold-cell">×2.0</td>
+          <td>Sell "Yes"</td>
+        </tr>
+        <tr>
+          <td>US acquires Greenland</td>
+          <td class="red-cell">12%</td>
+          <td class="green-cell">4%</td>
+          <td class="gold-cell">×3.0</td>
+          <td>Sell "Yes"</td>
+        </tr>
+        <tr>
+          <td>US takes Panama Canal</td>
+          <td class="red-cell">15%</td>
+          <td class="green-cell">6.5%</td>
+          <td class="gold-cell">×2.3</td>
+          <td>Sell "Yes"</td>
+        </tr>
+        <tr>
+          <td>US military strike on Iran (by Mar 31)</td>
+          <td>55%</td>
+          <td class="red-cell">68%</td>
+          <td class="green-cell">×0.8</td>
+          <td>Buy "Yes" ←</td>
+        </tr>
+        <tr>
+          <td>Putin out by end 2026</td>
+          <td class="red-cell">13%</td>
+          <td class="green-cell">~4%</td>
+          <td class="gold-cell">×3–4</td>
+          <td>Sell "Yes"</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:20px; font-family: var(--mono); font-size:11px; color:var(--muted);">
+      Pattern: market overprices "hopeful" events (peace, democratisation), underprices military escalation.
+    </p>
+  </div>
+
+  <!-- ══ SLIDE 5 — PUTIN CASE STUDY ══ -->
+  <div class="slide" id="s5">
+    <div class="tag">Case Study — Putin Out by Dec 2026</div>
+    <div class="grid-2" style="max-width: 900px; align-items: center;">
+      <div>
+        <div style="margin-bottom: 8px; font-family:var(--mono); font-size:11px; letter-spacing:0.15em; color:var(--muted); text-transform:uppercase;">Market price</div>
+        <div class="big-number red" style="font-size:120px;">13%</div>
+        <div style="font-family:var(--mono); font-size:12px; color:var(--muted); margin-top:8px;">$2.9M volume · Polymarket</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card">
+          <div class="card-label">Manski (2006) + Kalshi FLB</div>
+          <div class="card-num green">3–4%</div>
+          <div class="card-body">True probability. The market is overpriced by 3–4×.</div>
+        </div>
+        <div class="card red">
+          <div class="card-label">What's driving 13% — Availability Bias</div>
+          <div class="card-title" style="font-size:13px;">Iran precedent (Feb 2026 Khamenei strike) · Gasoline +16.4% · Social media buzz treated as fundamentals</div>
+        </div>
+        <div class="card green">
+          <div class="card-label">Historical record</div>
+          <div class="card-title" style="font-size:13px;">2024 market: resolved "No" &nbsp;·&nbsp; 2025 market: resolved "No"</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:32px; color:var(--muted); font-size:13px; font-family:var(--mono);">
+      Verdict: "No" position is mathematically +EV. Return ~15% on stake. Better plays exist below.
+    </p>
+  </div>
+
+  <!-- ══ SLIDE 6 — FAILURES ══ -->
+  <div class="slide" id="s6">
+    <div class="tag">Documented Polymarket Failures 2022–2026</div>
+    <h2 style="font-size:40px; margin-bottom:32px;">The Crowd Has a Track Record</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div>
+          <div class="timeline-event">US Midterms "Red Wave"</div>
+          <div class="timeline-detail">GOP-aligned polling contagion pushed markets too high. Wave never materialised.</div>
+        </div>
+        <div class="timeline-verdict">WRONG</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Aug 2024</div>
+        <div>
+          <div class="timeline-event">VP Selection — Josh Shapiro 68%</div>
+          <div class="timeline-detail">High-conviction crowd bet. Tim Walz was chosen. $0.68 → $0.</div>
+        </div>
+        <div class="timeline-verdict">WRONG</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Feb 2026</div>
+        <div>
+          <div class="timeline-event">Iran War — Regime Change 30–40%</div>
+          <div class="timeline-detail">$425M wagered (largest ever). Succession was orderly — IRGC held power.</div>
+        </div>
+        <div class="timeline-verdict">WRONG</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">Jan 2026</div>
+        <div>
+          <div class="timeline-event">Maduro Removal — $10.5M bet</div>
+          <div class="timeline-detail">Polymarket refused payout on resolution technicality. Double risk: wrong outcome + platform dispute.</div>
+        </div>
+        <div class="timeline-verdict">WRONG + DISPUTE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7 — 3 STRATEGIES ══ -->
+  <div class="slide" id="s7">
+    <div class="tag">3 Contrarian Strategies</div>
+    <div class="grid-3">
+      <div class="strategy-card">
+        <div class="return-badge">2–5×</div>
+        <div class="strategy-title">"Mention Market" Fade</div>
+        <div class="strategy-desc">Short-duration "Will X say Y?" markets. "Yes" is priced at $0.80 for 50/50 events. Sell "Yes" or buy "No" as maker. $0.95 contracts → ~1800% annualised.</div>
+        <div class="strategy-action">→ Be MAKER, not taker. Volume &gt;$100K only.</div>
+      </div>
+      <div class="strategy-card">
+        <div class="return-badge">5–10×</div>
+        <div class="strategy-title">"Fade the Chaos"</div>
+        <div class="strategy-desc">After a geopolitical event (missile, protest, arrest), "Yes" on regime change spikes 10–20% on hype. Fundamental power structures change slowly. Buy "No" at the peak.</div>
+        <div class="strategy-action">→ Trigger: price spike &gt;15pp in 24h. Act within 48h.</div>
+      </div>
+      <div class="strategy-card">
+        <div class="return-badge">2–10×</div>
+        <div class="strategy-title">Resolution Risk Arb</div>
+        <div class="strategy-desc">Markets with ambiguous resolution rules are systematically mispriced. Public reads headlines; "No" is underpriced because it requires reading the fine print. Maduro 2026 is the template.</div>
+        <div class="strategy-action">→ Always read resolution criteria before entry.</div>
+      </div>
+    </div>
+    <p style="margin-top:32px; font-family:var(--mono); font-size:11px; color:var(--muted); text-align:center;">
+      Precedent: Vitalik Buterin "anti-insanity mode" — 16% annualised on $440K portfolio selling emotionally-charged "Yes" bets
+    </p>
+  </div>
+
+  <!-- ══ SLIDE 8 — FINANCIAL MARKETS ══ -->
+  <div class="slide" id="s8">
+    <div class="tag">Beyond Polymarket — Financial Markets</div>
+    <div class="grid-2" style="max-width: 960px;">
+      <div>
+        <h3>Burry Model — Put Options on Hype</h3>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-label">Current positions (Q4 2025)</div>
+          <div class="card-title">Palantir: $912M puts (66% of portfolio)</div>
+          <div class="card-body">"Nvidia is the most loved, least doubted. Shorting it is cheap." — Burry, Jan 2026</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Entry signals</div>
+          <div class="card-title" style="font-size:13px; line-height:1.7;">
+            VIX &lt;14 &nbsp;·&nbsp; AAII Bullish &gt;44% &nbsp;·&nbsp; P/C ratio &lt;0.7<br>
+            → Buy puts on AI hype stocks &nbsp;·&nbsp; Target: 5–10×
+          </div>
+        </div>
+        <p style="margin-top:16px; font-size:12px; color:var(--muted);">
+          ⚠ Risk: Burry is often right in direction, early by 1–3 years. Use 12–18 month puts or positions expire worthless.
+        </p>
+      </div>
+      <div>
+        <h3>Soros Model — Asymmetric Macro</h3>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-label">Framework</div>
+          <div class="card-title">Limited downside + unlimited upside</div>
+          <div class="card-body">GBP 1992: currency pegged to unrealistic rate. Small premium, massive payoff when system broke.</div>
+        </div>
+        <div class="card">
+          <div class="card-label">2026 application</div>
+          <div class="card-title" style="font-size:13px; line-height:1.7;">
+            USD overvaluation thesis &nbsp;·&nbsp; AI capex bubble<br>
+            CNN Fear &amp; Greed: 25/100 now → wait for &gt;75<br>
+            AAII currently 44.3% bullish → borderline signal
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 9 — TOOLKIT ══ -->
+  <div class="slide" id="s9">
+    <div class="tag">Toolkit — How to Find These Opportunities</div>
+    <h2 style="font-size:44px; margin-bottom:36px;">Research Stack</h2>
+    <div class="tool-row">
+      <div class="tool-pill"><span>01</span> Swift Centre — weekly forecaster vs market delta</div>
+      <div class="tool-pill"><span>02</span> Polymarket — filter by "Yes" 8–20%, volume &gt;$100K</div>
+      <div class="tool-pill"><span>03</span> AAII Sentiment — alert at bullish &gt;44%</div>
+      <div class="tool-pill"><span>04</span> CNN Fear &amp; Greed — enter contrarian at &gt;75</div>
+      <div class="tool-pill"><span>05</span> VIX — buy puts when below 14</div>
+      <div class="tool-pill"><span>06</span> Apify RAG Browser — deep scrape source pages</div>
+      <div class="tool-pill"><span>07</span> QuantPedia — systematic edges in prediction markets</div>
+      <div class="tool-pill"><span>08</span> Wallet tracking — Polymarket insider wallets on Dune</div>
+    </div>
+    <div style="margin-top:40px; display:flex; gap:48px; align-items:center; justify-content:center;">
+      <div style="text-align:center;">
+        <div class="big-number" style="font-size:56px;">76%</div>
+        <div style="font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:0.1em; margin-top:4px;">SUPERFORECASTERS WIN RATE VS POLYMARKET</div>
+      </div>
+      <div style="width:1px; height:80px; background:var(--border);"></div>
+      <div style="text-align:center;">
+        <div class="big-number" style="font-size:56px;">$100K</div>
+        <div style="font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:0.1em; margin-top:4px;">MIN VOLUME FOR 84% ACCURACY</div>
+      </div>
+      <div style="width:1px; height:80px; background:var(--border);"></div>
+      <div style="text-align:center;">
+        <div class="big-number green" style="font-size:56px;">16%</div>
+        <div style="font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:0.1em; margin-top:4px;">VITALIK ANNUALISED ON $440K ANTI-INSANITY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 10 — CONCLUSION ══ -->
+  <div class="slide" id="s10">
+    <div class="tag">Conclusion</div>
+    <h1 style="font-size:clamp(40px,6vw,80px); margin-bottom:24px;">"THE WISDOM OF<br>THE CROWD IS<br>OFTEN THE FOLLY<br>OF THE TRIBE"</h1>
+    <p class="subtitle" style="margin-bottom:40px;">— Gemini Deep Research, 38 sources, Mar 2026</p>
+    <div class="grid-3" style="max-width: 800px;">
+      <div class="card green">
+        <div class="card-label">Edge</div>
+        <div class="card-title">Sell "Yes" on geopolitical longshots 8–20%</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Signal</div>
+        <div class="card-title">Swift Centre delta &gt;10pp = mispricing confirmed</div>
+      </div>
+      <div class="card red">
+        <div class="card-label">Risk</div>
+        <div class="card-title">Resolution disputes · Liquidity · Being early</div>
+      </div>
+    </div>
+    <div style="margin-top:48px; display:flex; gap:24px; align-items:center; justify-content:center; flex-wrap:wrap;">
+      <a href="https://github.com/BKproduct" target="_blank" style="font-family:var(--mono); font-size:12px; color:var(--gold); text-decoration:none; border:1px solid var(--gold); padding:10px 20px; border-radius:4px; letter-spacing:0.1em;">
+        ↗ github.com/BKproduct
+      </a>
+      <span style="font-family:var(--mono); font-size:11px; color:var(--muted);">@BKproduct · boris.korol@ai-automation.studio</span>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn" id="prevBtn">← PREV</button>
+  <div id="dots"></div>
+  <button class="nav-btn" id="nextBtn">NEXT →</button>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const dotsContainer = document.getElementById('dots');
+  let current = 0;
+  let transitioning = false;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(d);
+  });
+
+  function goTo(index) {
+    if (transitioning || index === current || index < 0 || index >= slides.length) return;
+    transitioning = true;
+
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+
+    const prev = current;
+    current = index;
+
+    setTimeout(() => {
+      slides[prev].classList.remove('exit');
+    }, 600);
+
+    slides[current].classList.add('active');
+
+    // Update UI
+    const dots = dotsContainer.querySelectorAll('.nav-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+
+    setTimeout(() => { transitioning = false; }, 650);
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+  document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+  });
+
+  // Swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) goTo(dx < 0 ? current + 1 : current - 1);
+  });
+
+  // Init progress
+  progress.style.width = (1 / slides.length * 100) + '%';
+</script>
+</body>
+</html>
