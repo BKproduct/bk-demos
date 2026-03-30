@@ -15,6 +15,7 @@
       --line: #DCE6EA;
       --ok: #12805C;
       --wait: #8A6D1A;
+      --fail: #B42318;
       --shadow: 0 12px 30px rgba(10, 45, 62, 0.08);
     }
     * { box-sizing: border-box; }
@@ -83,6 +84,7 @@
     }
     .ok { background: #DDF5ED; color: var(--ok); }
     .wait { background: #FFF4D8; color: var(--wait); }
+    .fail { background: #FDE8E8; color: var(--fail); }
     .small { font-size: 12px; color: #5B7083; }
     .email { font-weight: 700; color: #17324A; }
     .foot {
@@ -100,7 +102,7 @@
       <div class="head">
         <h1>AAS Outreach Tracking - Labs (WGS)</h1>
         <div class="meta">
-          Snapshot for Evgeny · Mailbox: boris.korol@ai-automation.studio · Updated: 2026-03-30 08:30 (London)
+          Snapshot for Evgeny · Mailbox: boris.korol@ai-automation.studio · Updated: 2026-03-30 17:35 (London)
         </div>
       </div>
 
@@ -142,10 +144,12 @@
               <span class="small">previously used: partners@nebula.org</span>
             </td>
             <td>2026-03-30 08:21</td>
-            <td>Нет</td>
-            <td>-</td>
-            <td>-</td>
-            <td><span class="badge wait">Waiting</span></td>
+            <td>Bounce (не доставлено)</td>
+            <td>Mail Delivery Subsystem · 2026-03-30 07:21 UTC</td>
+            <td>
+              Письмо на <span class="email">info@nebula.org</span> не доставлено: адрес не найден / отклонён сервером (550).
+            </td>
+            <td><span class="badge fail">Delivery failed</span></td>
           </tr>
           <tr>
             <td>4</td>
@@ -161,33 +165,36 @@
             <td><span class="email">support@sequencing.com</span></td>
             <td>2026-03-30 08:20</td>
             <td>Да</td>
-            <td>Vanessa / AI Agent · 2026-03-30 07:21 UTC</td>
+            <td>Ken (Sequencing) · 2026-03-30 16:28 UTC</td>
             <td>
-              30x WGS есть, saliva/cheek swab; стандартно FASTQ+VCF, BAM по запросу.<br>
-              Ограничения: raw data “not medical grade”; возврат китов/логистика — US only (по их письму).
+              Запрос переслан в BD (Nicole); предложена встреча по Calendly. Ранее по продукту: 30x WGS, saliva/cheek swab; raw data не clinical-grade; логистика китов — ориентир US.
             </td>
-            <td><span class="badge wait">Not a fit (constraints)</span></td>
+            <td><span class="badge ok">BD engaged — book call</span></td>
           </tr>
           <tr>
             <td>6</td>
             <td><span class="email">support@selfdecode.com</span></td>
             <td>2026-03-30 08:20</td>
             <td>Да</td>
-            <td>SelfDecode Support auto-ack · 2026-03-29 21:44 UTC</td>
-            <td>Авто-подтверждение получения. Содержательного ответа по WGS/логистике пока нет.</td>
-            <td><span class="badge wait">Waiting (auto-reply)</span></td>
+            <td>Sarah P (Support) · 2026-03-30 15:59 UTC</td>
+            <td>
+              WGS 30× в США, стандарт — cheek swab; доставка по миру, возврат пробы в US-lab. Consumer-поток: сжатый raw text, без gVCF/VCF/BAM/FASTQ; для B2B — отдельное обсуждение (OmicsEdge), в т.ч. VCF и мульти-юрисдикции. Обещан follow-up.
+            </td>
+            <td><span class="badge ok">B2B path — OmicsEdge</span></td>
           </tr>
           <tr>
             <td>7</td>
             <td>
               <span class="email">contact@dantelabs.com</span><br>
-              <span class="small">previously used: ir@dantelabs.com</span>
+              <span class="small">previously used: ir@dantelabs.com · ответ с hello@dantelabs.com</span>
             </td>
             <td>2026-03-30 08:20</td>
-            <td>Нет</td>
-            <td>-</td>
-            <td>-</td>
-            <td><span class="badge wait">Waiting</span></td>
+            <td>Да</td>
+            <td>Hello Dante Labs · 2026-03-30 11:00 (Europe)</td>
+            <td>
+              Передают в Sales Dante Genomics (<span class="email">sales@danteomics.com</span>) для уточнения потребностей.
+            </td>
+            <td><span class="badge ok">Sales engaged</span></td>
           </tr>
         </tbody>
       </table>
