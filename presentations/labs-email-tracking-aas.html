@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AAS Labs Outreach Tracking</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Open+Sans:wght@400;600;700&display=swap');
+    :root {
+      --teal: #26A688;
+      --teal-light: #3FBFA1;
+      --body-color: #333F70;
+      --bg-white: #FFFFFF;
+      --bg-neutral: #F2F6F8;
+      --line: #DCE6EA;
+      --ok: #12805C;
+      --wait: #8A6D1A;
+      --shadow: 0 12px 30px rgba(10, 45, 62, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f7fbfc 0%, #eef4f6 100%);
+      color: var(--body-color);
+      font-family: 'Open Sans', Arial, sans-serif;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 28px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: var(--bg-white);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .head {
+      padding: 22px 24px 14px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(38,166,136,0.12), rgba(38,166,136,0.02));
+    }
+    h1 {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: clamp(20px, 2.4vw, 30px);
+      color: #17324A;
+    }
+    .meta {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #476076;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    th {
+      background: var(--bg-neutral);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #476076;
+      font-weight: 700;
+    }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .ok { background: #DDF5ED; color: var(--ok); }
+    .wait { background: #FFF4D8; color: var(--wait); }
+    .small { font-size: 12px; color: #5B7083; }
+    .email { font-weight: 700; color: #17324A; }
+    .foot {
+      border-top: 1px solid var(--line);
+      background: #fbfdfe;
+      padding: 10px 14px 16px;
+      font-size: 12px;
+      color: #5B7083;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <h1>AAS Outreach Tracking - Labs (WGS)</h1>
+        <div class="meta">
+          Snapshot for Evgeny · Mailbox: boris.korol@ai-automation.studio · Updated: 2026-03-30 08:30 (London)
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Кому отправлено</th>
+            <th>Последняя отправка</th>
+            <th>Ответ получен</th>
+            <th>Последний ответ (кто и когда)</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><span class="email">info@cegat.de</span></td>
+            <td>2026-03-30 08:20</td>
+            <td>Нет</td>
+            <td>-</td>
+            <td><span class="badge wait">Waiting</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><span class="email">customercare@cei.eurofinsus.com</span></td>
+            <td>2026-03-30 08:20</td>
+            <td>Нет</td>
+            <td>-</td>
+            <td><span class="badge wait">Waiting</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>
+              <span class="email">info@nebula.org</span><br>
+              <span class="small">previously used: partners@nebula.org</span>
+            </td>
+            <td>2026-03-30 08:21</td>
+            <td>Нет</td>
+            <td>-</td>
+            <td><span class="badge wait">Waiting</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><span class="email">info@veritasint.com</span></td>
+            <td>2026-03-30 08:20</td>
+            <td>Нет</td>
+            <td>-</td>
+            <td><span class="badge wait">Waiting</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><span class="email">support@sequencing.com</span></td>
+            <td>2026-03-30 08:20</td>
+            <td>Да</td>
+            <td>AI Agent / Vanessa from Sequencing · 2026-03-30 07:21 UTC</td>
+            <td><span class="badge ok">Reply received</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><span class="email">support@selfdecode.com</span></td>
+            <td>2026-03-30 08:20</td>
+            <td>Да</td>
+            <td>SelfDecode Support auto-ack · 2026-03-29 21:44 UTC</td>
+            <td><span class="badge ok">Auto-reply received</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>
+              <span class="email">contact@dantelabs.com</span><br>
+              <span class="small">previously used: ir@dantelabs.com</span>
+            </td>
+            <td>2026-03-30 08:20</td>
+            <td>Нет</td>
+            <td>-</td>
+            <td><span class="badge wait">Waiting</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="foot">
+        Sources: AAS Gmail search (Sent + Inbox) and Explee domain verification on 2026-03-30.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
