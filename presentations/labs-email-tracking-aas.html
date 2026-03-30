@@ -37,6 +37,21 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
+    /* Mobile: horizontal scroll so all columns stay reachable */
+    .table-wrap {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
+    .table-hint {
+      display: none;
+      padding: 8px 14px 0;
+      font-size: 12px;
+      color: #5B7083;
+      text-align: center;
+    }
     .head {
       padding: 22px 24px 14px;
       border-bottom: 1px solid var(--line);
@@ -56,15 +71,28 @@
     }
     table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
       font-size: 14px;
+      table-layout: fixed;
     }
     th, td {
       text-align: left;
       vertical-align: top;
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      hyphens: auto;
     }
+    /* Column widths help wrapping on narrow scroll viewport */
+    th:nth-child(1), td:nth-child(1) { width: 2.25rem; }
+    th:nth-child(2), td:nth-child(2) { width: 22%; }
+    th:nth-child(3), td:nth-child(3) { width: 11%; }
+    th:nth-child(4), td:nth-child(4) { width: 8%; }
+    th:nth-child(5), td:nth-child(5) { width: 14%; }
+    th:nth-child(6), td:nth-child(6) { width: 32%; }
+    th:nth-child(7), td:nth-child(7) { width: 10%; }
     th {
       background: var(--bg-neutral);
       font-size: 12px;
@@ -80,7 +108,9 @@
       padding: 3px 10px;
       font-size: 12px;
       font-weight: 700;
-      white-space: nowrap;
+      white-space: normal;
+      max-width: 100%;
+      line-height: 1.25;
     }
     .ok { background: #DDF5ED; color: var(--ok); }
     .wait { background: #FFF4D8; color: var(--wait); }
@@ -94,6 +124,44 @@
       font-size: 12px;
       color: #5B7083;
     }
+
+    @media (max-width: 768px) {
+      .wrap {
+        margin: 16px auto;
+        padding: 0 12px;
+      }
+      .head {
+        padding: 16px 14px 12px;
+      }
+      .meta {
+        font-size: 13px;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+      .table-hint {
+        display: block;
+      }
+      table {
+        min-width: 640px;
+        font-size: 13px;
+      }
+      th, td {
+        padding: 10px 8px;
+      }
+      th {
+        font-size: 10px;
+        letter-spacing: 0.02em;
+      }
+      .small {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      table {
+        min-width: 580px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -106,6 +174,8 @@
         </div>
       </div>
 
+      <p class="table-hint" aria-hidden="true">Таблица широкая — листайте пальцем влево-вправо, чтобы увидеть все столбцы.</p>
+      <div class="table-wrap">
       <table>
         <thead>
           <tr>
@@ -214,6 +284,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
 
       <div class="foot"></div>
     </div>
