@@ -71,7 +71,7 @@
     }
     table {
       width: 100%;
-      min-width: 720px;
+      min-width: 640px;
       border-collapse: collapse;
       font-size: 14px;
       table-layout: fixed;
@@ -85,14 +85,33 @@
       overflow-wrap: anywhere;
       hyphens: auto;
     }
-    /* Column widths help wrapping on narrow scroll viewport */
-    th:nth-child(1), td:nth-child(1) { width: 2.25rem; }
-    th:nth-child(2), td:nth-child(2) { width: 22%; }
-    th:nth-child(3), td:nth-child(3) { width: 11%; }
-    th:nth-child(4), td:nth-child(4) { width: 8%; }
-    th:nth-child(5), td:nth-child(5) { width: 14%; }
-    th:nth-child(6), td:nth-child(6) { width: 32%; }
-    th:nth-child(7), td:nth-child(7) { width: 10%; }
+    /* 6 columns: #, Кому, Дата, Последний ответ, Суть, Статус */
+    th:nth-child(1), td:nth-child(1) { width: 2rem; }
+    th:nth-child(2), td:nth-child(2) { width: 20%; }
+    th:nth-child(3), td:nth-child(3) { width: 9%; }
+    th:nth-child(4), td:nth-child(4) { width: 17%; }
+    th:nth-child(5), td:nth-child(5) { width: 36%; }
+    th:nth-child(6), td:nth-child(6) {
+      width: 14%;
+      min-width: 9.5rem;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+    /* «Bones» в запросе = подсветка как у Bounce (доставка/ошибка) */
+    .reply-bounce,
+    .reply-bones {
+      color: var(--fail);
+      font-weight: 700;
+    }
+    .reply-ok,
+    .reply-received {
+      color: var(--ok);
+      font-weight: 700;
+    }
+    .reply-muted {
+      color: #5B7083;
+      font-weight: 400;
+    }
     th {
       background: var(--bg-neutral);
       font-size: 12px;
@@ -105,12 +124,12 @@
     .badge {
       display: inline-block;
       border-radius: 999px;
-      padding: 3px 10px;
+      padding: 6px 12px;
       font-size: 12px;
       font-weight: 700;
-      white-space: normal;
-      max-width: 100%;
-      line-height: 1.25;
+      white-space: nowrap;
+      line-height: 1.3;
+      max-width: none;
     }
     .ok { background: #DDF5ED; color: var(--ok); }
     .wait { background: #FFF4D8; color: var(--wait); }
@@ -142,7 +161,7 @@
         display: block;
       }
       table {
-        min-width: 640px;
+        min-width: 560px;
         font-size: 13px;
       }
       th, td {
@@ -159,7 +178,10 @@
 
     @media (max-width: 400px) {
       table {
-        min-width: 580px;
+        min-width: 520px;
+      }
+      th:nth-child(6), td:nth-child(6) {
+        min-width: 8.75rem;
       }
     }
   </style>
@@ -182,7 +204,6 @@
             <th>#</th>
             <th>Кому отправлено</th>
             <th>Последняя отправка</th>
-            <th>Ответ получен</th>
             <th>Последний ответ (кто и когда)</th>
             <th>Суть ответа</th>
             <th>Статус</th>
@@ -196,8 +217,7 @@
               <span class="small">CC: info@cegat.de · ранее: info@cegat.de (источник контактов: cegat.com/contact, cegat.com/us)</span>
             </td>
             <td>2026-03-31 14:05</td>
-            <td>Нет</td>
-            <td>-</td>
+            <td><span class="reply-muted">—</span></td>
             <td>
               <strong>Запрос (ответа от лаборатории пока нет).</strong><br>
               <strong>Откуда проба / пациенты:</strong> ОАЭ (Дубай), Россия (Москва), Казахстан (Алматы) — со слюной по протоколу лаборатории (или эквивалентный oral swab, если аккредитуют).<br>
@@ -212,8 +232,7 @@
               <span class="small">CC: customercare@cei.eurofinsus.com · источник: clinicalenterprise.com, eurofinsus.com/locations</span>
             </td>
             <td>2026-03-31 14:06</td>
-            <td>Нет</td>
-            <td>-</td>
+            <td><span class="reply-muted">—</span></td>
             <td>
               <strong>Запрос (ответа от лаборатории пока нет).</strong><br>
               <strong>Откуда проба / пациенты:</strong> те же юрисдикции — <strong>ОАЭ (Дубай), Россия (Москва), Казахстан (Алматы)</strong>; тип пробы — слюна/oral по их клиническому потоку.<br>
@@ -228,8 +247,7 @@
               <span class="small">CC: support@nebula.org · не доставлено: info@nebula.org (550)</span>
             </td>
             <td>2026-03-30 (follow-up канал)</td>
-            <td>Нет</td>
-            <td>Bounce только на info@ · 2026-03-30 07:21 UTC</td>
+            <td><span class="reply-bounce">Bounce</span> только на info@ · 2026-03-30 07:21 UTC</td>
             <td>
               <strong>Запрос (ответа по сути пока нет).</strong> <span class="email">info@nebula.org</span> — отказ доставки. Повтор на partners+business+support.<br>
               <strong>Откуда проба / пациенты:</strong> ОАЭ (Дубай), Россия (Москва), Казахстан (Алматы), слюна/oral.<br>
@@ -241,17 +259,15 @@
             <td>4</td>
             <td><span class="email">info@veritasint.com</span></td>
             <td>2026-03-30 08:20</td>
-            <td>Нет</td>
-            <td>-</td>
-            <td>-</td>
+            <td><span class="reply-muted">—</span></td>
+            <td><span class="reply-muted">—</span></td>
             <td><span class="badge wait">Waiting</span></td>
           </tr>
           <tr>
             <td>5</td>
             <td><span class="email">support@sequencing.com</span></td>
             <td>2026-03-30 08:20</td>
-            <td>Да</td>
-            <td>Ken (Sequencing) · 2026-03-30 16:28 UTC</td>
+            <td><span class="reply-received">Ken (Sequencing) · 2026-03-30 16:28 UTC</span></td>
             <td>
               Запрос переслан в BD (Nicole); предложена встреча по Calendly. Ранее по продукту: 30x WGS, saliva/cheek swab; raw data не clinical-grade; логистика китов — ориентир US.
             </td>
@@ -261,8 +277,7 @@
             <td>6</td>
             <td><span class="email">support@selfdecode.com</span></td>
             <td>2026-03-30 08:20</td>
-            <td>Да</td>
-            <td>Sarah P (Support) · 2026-03-30 15:59 UTC</td>
+            <td><span class="reply-received">Sarah P (Support) · 2026-03-30 15:59 UTC</span></td>
             <td>
               WGS 30× в США, стандарт — cheek swab; доставка по миру, возврат пробы в US-lab. Consumer-поток: сжатый raw text, без gVCF/VCF/BAM/FASTQ; для B2B — отдельное обсуждение (OmicsEdge), в т.ч. VCF и мульти-юрисдикции. Обещан follow-up.
             </td>
@@ -275,8 +290,7 @@
               <span class="small">previously used: ir@dantelabs.com · ответ с hello@dantelabs.com</span>
             </td>
             <td>2026-03-30 08:20</td>
-            <td>Да</td>
-            <td>Hello Dante Labs · 2026-03-30 11:00 (Europe)</td>
+            <td><span class="reply-received">Hello Dante Labs · 2026-03-30 11:00 (Europe)</span></td>
             <td>
               Передают в Sales Dante Genomics (<span class="email">sales@danteomics.com</span>) для уточнения потребностей.
             </td>
