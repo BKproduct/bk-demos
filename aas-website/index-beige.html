@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Automation Studio — AI-Powered Automation for Professional Services</title>
+<meta name="description" content="Increase employee productivity by 1.3–1.5× while scaling your practice through intelligent automation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --cream:      #F7F2EA;
+  --cream-2:    #EFE9DC;
+  --cream-3:    #E7E0D0;
+  --parchment:  #DDD5C2;
+  --ink:        #1C1812;
+  --ink-mid:    #5A5347;
+  --ink-soft:   #9A9186;
+  --ink-ghost:  #C8C0B2;
+  --bronze:     #8B6530;
+  --bronze-lt:  #B8894A;
+  --bronze-glow:#C9A96E;
+  --forest:     #1F5C4A;
+  --forest-lt:  #2D8068;
+  --border:     rgba(28,24,18,0.1);
+  --border-sm:  rgba(28,24,18,0.06);
+  --serif:      'Playfair Display', Georgia, serif;
+  --sans:       'Jost', system-ui, sans-serif;
+  --easing:     cubic-bezier(0.16, 1, 0.3, 1);
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+::selection { background: rgba(139,101,48,0.18); }
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--cream-2); }
+::-webkit-scrollbar-thumb { background: var(--bronze); border-radius: 2px; }
+
+/* ─── PAPER TEXTURE ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: multiply;
+}
+
+/* ─── TYPOGRAPHY ─── */
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.1; }
+h1 { font-size: clamp(3rem, 7vw, 6rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(2.2rem, 4.5vw, 4rem); letter-spacing: -0.015em; }
+h3 { font-size: clamp(1.3rem, 2.5vw, 1.9rem); }
+p  { font-size: clamp(0.95rem, 1.4vw, 1.05rem); color: var(--ink-mid); }
+
+/* ─── LAYOUT ─── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1.5rem, 4vw, 4rem); }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.5rem clamp(1.5rem, 4vw, 4rem);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(247,242,234,0.85);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid var(--border-sm);
+  transition: all 0.4s var(--easing);
+}
+nav.scrolled { padding: 1rem clamp(1.5rem, 4vw, 4rem); }
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  display: flex; align-items: center; gap: 0.9rem;
+}
+.nav-logo .logo-mark {
+  width: 34px; height: 34px;
+  border: 1.5px solid var(--bronze);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  color: var(--bronze);
+  font-family: var(--serif);
+  font-style: italic;
+}
+.nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-mid); text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  padding: 0.55rem 1.4rem;
+  border: 1px solid var(--bronze) !important;
+  border-radius: 2px;
+  color: var(--bronze) !important;
+  transition: all 0.2s !important;
+}
+.nav-cta:hover { background: var(--bronze) !important; color: var(--cream) !important; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 55fr 45fr;
+  align-items: center;
+  gap: 5rem;
+  padding: 9rem clamp(1.5rem, 4vw, 4rem) 6rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+}
+/* Decorative ruled lines */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: calc(55% + 2rem);
+  width: 1px;
+  background: linear-gradient(180deg, transparent 10%, var(--border) 30%, var(--border) 70%, transparent 90%);
+  pointer-events: none;
+}
+.hero-overline {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.hero-tag {
+  font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--forest);
+  padding: 0.3rem 0.85rem;
+  border: 1px solid rgba(31,92,74,0.3);
+  border-radius: 1px;
+}
+.hero-rule { flex: 1; height: 1px; background: var(--border); }
+.hero h1 { margin-bottom: 1.75rem; }
+.hero h1 em { font-style: italic; color: var(--bronze); }
+.hero-lead {
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+  color: var(--ink-mid);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+}
+.hero-lead strong { color: var(--ink); font-weight: 500; }
+.hero-actions { display: flex; gap: 1rem; align-items: center; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--sans); font-size: 0.82rem;
+  font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; border-radius: 2px;
+  transition: all 0.25s var(--easing);
+}
+.btn-primary:hover { background: var(--bronze); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,101,48,0.18); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.875rem 0;
+  color: var(--ink-mid); font-size: 0.85rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.btn-secondary:hover { color: var(--ink); border-color: var(--ink-mid); }
+
+/* ─── HERO RIGHT ─── */
+.hero-right { display: flex; flex-direction: column; gap: 1.25rem; }
+.hero-stat-card {
+  background: var(--cream-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.75rem 2rem;
+  position: relative;
+}
+.hero-stat-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--bronze);
+  border-radius: 4px 0 0 4px;
+}
+.stat-number {
+  font-family: var(--serif);
+  font-size: 3.5rem; font-weight: 400;
+  color: var(--bronze); line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.stat-label {
+  font-size: 0.72rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-soft);
+}
+.stat-desc { font-size: 0.88rem; color: var(--ink-mid); margin-top: 0.5rem; line-height: 1.55; }
+.stat-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.stat-mini {
+  background: var(--cream-2);
+  border: 1px solid var(--border-sm);
+  border-radius: 4px; padding: 1.25rem;
+}
+.stat-mini-num {
+  font-family: var(--serif); font-size: 2rem;
+  color: var(--forest); line-height: 1;
+}
+.stat-mini-label { font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.3rem; letter-spacing: 0.06em; }
+
+/* ─── RULE DIVIDER ─── */
+.rule-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ─── MARQUEE ─── */
+.marquee-section {
+  background: var(--ink);
+  padding: 1.1rem 0;
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex; white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+.marquee-item {
+  display: inline-flex; align-items: center; gap: 1.5rem;
+  padding: 0 3rem;
+  font-size: 0.7rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(247,242,234,0.4);
+}
+.marquee-item .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--bronze-glow); flex-shrink: 0; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ─── SECTION LABEL ─── */
+.section-label {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  font-size: 0.7rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--bronze);
+  margin-bottom: 1.25rem;
+}
+.section-label::before { content: ''; display: block; width: 20px; height: 1px; background: var(--bronze-glow); }
+
+/* ─── PROBLEM ─── */
+.problem-section { padding: 8rem 0; background: var(--cream-2); }
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1.4fr;
+  gap: 7rem; align-items: start;
+}
+.problem-left h2 span { color: var(--bronze); }
+.problem-lead { margin-top: 1.5rem; max-width: 360px; }
+.problem-quote {
+  margin-top: 2.5rem;
+  padding: 1.75rem 1.75rem 1.75rem 2rem;
+  border-left: 2px solid var(--bronze);
+  background: var(--cream-3);
+  font-family: var(--serif); font-style: italic;
+  font-size: 1.15rem; color: var(--ink); line-height: 1.6;
+}
+.problem-items { display: flex; flex-direction: column; }
+.problem-item {
+  display: grid; grid-template-columns: 52px 1fr;
+  gap: 1.5rem; padding: 1.75rem 0;
+  border-bottom: 1px solid var(--border-sm);
+  align-items: start; transition: 0.2s;
+}
+.problem-item:first-child { border-top: 1px solid var(--border-sm); }
+.problem-num {
+  font-family: var(--serif); font-size: 2.25rem;
+  color: var(--ink-ghost); line-height: 1; font-weight: 400;
+}
+.problem-item:hover .problem-num { color: var(--bronze); }
+.problem-title { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 0.35rem; }
+.problem-body { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.65; }
+
+/* ─── SOLUTIONS ─── */
+.solutions-section { padding: 8rem 0; }
+.solutions-intro {
+  display: grid; grid-template-columns: 1.1fr 1fr;
+  gap: 4rem; align-items: center; margin-bottom: 5rem;
+}
+.solutions-intro p { max-width: 400px; line-height: 1.75; }
+/* Masonry-inspired grid */
+.solutions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border-sm);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.sol-card {
+  background: var(--cream);
+  padding: 2.5rem 2rem;
+  transition: background 0.3s;
+}
+.sol-card:hover { background: var(--cream-2); }
+.sol-icon {
+  width: 38px; height: 38px;
+  background: rgba(139,101,48,0.08);
+  border: 1px solid rgba(139,101,48,0.15);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.25rem; font-size: 1rem;
+}
+.sol-title { font-size: 1rem; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; }
+.sol-body { font-size: 0.87rem; color: var(--ink-mid); line-height: 1.65; }
+.sol-tag {
+  display: inline-block; margin-top: 1rem;
+  font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--forest);
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgba(31,92,74,0.2); border-radius: 1px;
+}
+
+/* ─── HOW ─── */
+.how-section { padding: 8rem 0; background: var(--ink); }
+.how-section .section-label { color: var(--bronze-glow); }
+.how-section .section-label::before { background: var(--bronze-glow); }
+.how-section h2 { color: var(--cream); }
+.how-section .section-header { text-align: center; margin-bottom: 4.5rem; }
+.how-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 3rem; position: relative;
+}
+.how-grid::before {
+  content: '';
+  position: absolute; top: 32px; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(247,242,234,0.1), transparent);
+}
+.how-step { text-align: center; }
+.how-num-wrap {
+  width: 64px; height: 64px;
+  border: 1px solid rgba(247,242,234,0.1);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem; background: rgba(247,242,234,0.03);
+  position: relative; z-index: 1;
+  transition: border-color 0.3s;
+}
+.how-step:hover .how-num-wrap { border-color: var(--bronze-glow); }
+.how-num { font-family: var(--serif); font-size: 1.5rem; color: rgba(247,242,234,0.35); }
+.how-step:hover .how-num { color: var(--bronze-glow); }
+.how-title { font-size: 0.92rem; font-weight: 500; color: var(--cream); margin-bottom: 0.5rem; }
+.how-desc { font-size: 0.83rem; color: rgba(247,242,234,0.45); }
+
+/* ─── CASES ─── */
+.cases-section { padding: 8rem 0; background: var(--cream-2); }
+.cases-tabs {
+  display: flex; gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px; overflow: hidden;
+  margin-bottom: 3.5rem; width: fit-content;
+}
+.case-tab {
+  padding: 0.65rem 1.5rem;
+  font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-mid); cursor: pointer;
+  background: transparent; border: none;
+  border-right: 1px solid var(--border);
+  transition: all 0.2s; font-family: var(--sans);
+}
+.case-tab:last-child { border-right: none; }
+.case-tab.active { background: var(--ink); color: var(--cream); }
+.case-tab:not(.active):hover { background: var(--cream-3); color: var(--ink); }
+.case-panel { display: none; }
+.case-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+.case-story h3 { margin-bottom: 1.25rem; }
+.case-story p { margin-bottom: 1.5rem; }
+.case-before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 2rem; }
+.ba-col { padding: 1.5rem; border-radius: 3px; border: 1px solid var(--border-sm); }
+.ba-col.before { background: rgba(200,84,80,0.04); border-color: rgba(200,84,80,0.12); }
+.ba-col.after  { background: rgba(31,92,74,0.04); border-color: rgba(31,92,74,0.15); }
+.ba-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.9rem; font-weight: 500; }
+.ba-col.before .ba-label { color: #C85450; }
+.ba-col.after  .ba-label { color: var(--forest); }
+.ba-list { list-style: none; font-size: 0.86rem; color: var(--ink-mid); }
+.ba-list li { padding: 0.3rem 0; padding-left: 1rem; position: relative; }
+.ba-list li::before { content: '—'; position: absolute; left: 0; color: var(--ink-ghost); }
+.case-metrics { display: flex; flex-direction: column; gap: 1.25rem; }
+.metric-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 3px; padding: 1.75rem 2rem;
+  display: flex; align-items: center; gap: 2rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover { transform: translateX(3px); box-shadow: 4px 0 0 var(--bronze); }
+.metric-num {
+  font-family: var(--serif); font-size: 3rem;
+  color: var(--bronze); line-height: 1;
+  flex-shrink: 0; min-width: 90px;
+}
+.metric-info-label { font-size: 0.92rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; }
+.metric-info-desc { font-size: 0.83rem; color: var(--ink-mid); }
+
+/* ─── TECH ─── */
+.tech-section {
+  padding: 6rem 0;
+  background: var(--cream);
+  border-top: 1px solid var(--border-sm);
+  border-bottom: 1px solid var(--border-sm);
+}
+.tech-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 6rem; align-items: center; }
+.tech-features { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.tech-feat { display: flex; align-items: flex-start; gap: 0.75rem; }
+.tech-feat-icon {
+  width: 32px; height: 32px; flex-shrink: 0;
+  background: rgba(139,101,48,0.07);
+  border: 1px solid rgba(139,101,48,0.12);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+}
+.tech-feat-title { font-size: 0.88rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; }
+.tech-feat-desc { font-size: 0.82rem; color: var(--ink-mid); line-height: 1.55; }
+
+/* ─── RESULTS ─── */
+.results-section { padding: 8rem 0; }
+.results-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border-sm);
+  border: 1px solid var(--border); border-radius: 4px;
+  overflow: hidden; margin-top: 4rem;
+}
+.result-cell {
+  background: var(--cream);
+  padding: 3rem 2.5rem; text-align: center;
+  transition: background 0.3s; position: relative;
+}
+.result-cell:hover { background: var(--cream-2); }
+.result-cell::after {
+  content: attr(data-icon);
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  font-size: 1.1rem; opacity: 0.35;
+}
+.result-num {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 4vw, 3.75rem);
+  color: var(--forest); font-weight: 400; line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.result-label { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; }
+.result-desc { font-size: 0.83rem; color: var(--ink-mid); }
+
+/* ─── CTA ─── */
+.cta-section { padding: 8rem 0; background: var(--cream-3); position: relative; overflow: hidden; }
+.cta-section::before {
+  content: '';
+  position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(139,101,48,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+/* Decorative corner elements */
+.cta-section::after {
+  content: '';
+  position: absolute; bottom: 3rem; right: 4rem;
+  width: 80px; height: 80px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.cta-inner { text-align: center; position: relative; z-index: 1; }
+.cta-inner h2 { margin-bottom: 1.25rem; }
+.cta-inner h2 em { font-style: italic; color: var(--bronze); }
+.cta-inner p { max-width: 520px; margin: 0 auto 2.5rem; font-size: 1.05rem; line-height: 1.75; }
+/* Decorative top frame */
+.cta-frame {
+  display: inline-block;
+  padding: 4rem 5rem;
+  position: relative;
+}
+.cta-frame::before, .cta-frame::after {
+  content: '';
+  position: absolute;
+  width: 40px; height: 40px;
+}
+.cta-frame::before { top: 0; left: 0; border-top: 1px solid var(--bronze); border-left: 1px solid var(--bronze); }
+.cta-frame::after  { bottom: 0; right: 0; border-bottom: 1px solid var(--bronze); border-right: 1px solid var(--bronze); }
+.cta-steps {
+  display: flex; gap: 3rem; justify-content: center;
+  margin-bottom: 3rem; flex-wrap: wrap;
+}
+.cta-step {
+  display: flex; align-items: center; gap: 0.75rem;
+  font-size: 0.85rem; color: var(--ink-mid);
+}
+.cta-step-num {
+  width: 26px; height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; color: var(--ink-ghost); flex-shrink: 0;
+}
+.cta-actions { display: flex; gap: 1rem; justify-content: center; align-items: center; }
+.btn-bronze {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 1rem 2.5rem;
+  background: var(--bronze);
+  color: var(--cream);
+  font-family: var(--sans); font-size: 0.82rem;
+  font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none; border-radius: 2px;
+  transition: all 0.25s var(--easing);
+}
+.btn-bronze:hover { background: var(--bronze-lt); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(139,101,48,0.2); }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  padding: 4.5rem 0 2.5rem;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 4rem; margin-bottom: 3rem;
+}
+.footer-brand {
+  font-family: var(--serif); font-size: 1.4rem;
+  color: var(--cream); margin-bottom: 0.75rem;
+}
+.footer-tagline { font-size: 0.85rem; color: rgba(247,242,234,0.4); line-height: 1.6; max-width: 280px; }
+.footer-heading {
+  font-size: 0.68rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(247,242,234,0.3);
+  margin-bottom: 1.25rem;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 0.6rem; }
+.footer-links a {
+  font-size: 0.88rem; color: rgba(247,242,234,0.5);
+  text-decoration: none; transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--cream); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(247,242,234,0.06);
+  font-size: 0.78rem; color: rgba(247,242,234,0.2);
+}
+
+/* ─── REVEAL ─── */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.75s var(--easing), transform 0.75s var(--easing);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  .hero { grid-template-columns: 1fr; padding-top: 7rem; }
+  .hero::after { display: none; }
+  .hero-right { display: none; }
+  .problem-grid, .solutions-intro, .case-panel.active, .tech-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .solutions-grid { grid-template-columns: 1fr 1fr; }
+  .how-grid { grid-template-columns: 1fr 1fr; }
+  .how-grid::before { display: none; }
+  .results-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .solutions-grid, .stat-mini-grid, .results-grid, .tech-features { grid-template-columns: 1fr; }
+  .case-before-after, .how-grid, .footer-grid { grid-template-columns: 1fr; }
+  .cta-steps { flex-direction: column; align-items: center; gap: 1rem; }
+  .cta-frame { padding: 3rem 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <div class="logo-mark">A</div>
+    AI Automation Studio
+  </a>
+  <ul class="nav-links">
+    <li><a href="#solutions">Solutions</a></li>
+    <li><a href="#cases">Case Studies</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#contact" class="nav-cta">Book a Call</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div>
+      <div class="hero-overline reveal">
+        <span class="hero-tag">Professional Services Automation</span>
+        <span class="hero-rule"></span>
+      </div>
+      <h1 class="reveal reveal-delay-1">Scale your<br>practice,<br><em>not your<br>headcount</em></h1>
+      <p class="hero-lead reveal reveal-delay-2">
+        Increase employee productivity by <strong>1.3–1.5×</strong> while growing your client base. Intelligent automation for accounting, legal, and recruitment firms.
+      </p>
+      <div class="hero-actions reveal reveal-delay-3">
+        <a href="https://calendly.com/ai-automation-studio" target="_blank" class="btn-primary">
+          Schedule a Call →
+        </a>
+        <a href="#cases" class="btn-secondary">View case studies</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat-card reveal reveal-delay-2">
+        <div class="stat-number"><span class="counter" data-target="1.4">0</span>×</div>
+        <div class="stat-label">Average productivity increase</div>
+        <div class="stat-desc">Staff onboard 40% more clients in the same timeframe — without new hires.</div>
+      </div>
+      <div class="stat-mini-grid">
+        <div class="stat-mini reveal reveal-delay-3">
+          <div class="stat-mini-num"><span class="counter" data-target="85">0</span>%</div>
+          <div class="stat-mini-label">Faster client setup</div>
+        </div>
+        <div class="stat-mini reveal reveal-delay-4">
+          <div class="stat-mini-num"><span class="counter" data-target="75">0</span>%</div>
+          <div class="stat-mini-label">Document time saved</div>
+        </div>
+        <div class="stat-mini reveal reveal-delay-5">
+          <div class="stat-mini-num"><span class="counter" data-target="100">0</span>%</div>
+          <div class="stat-mini-label">Data consistency</div>
+        </div>
+        <div class="stat-mini reveal reveal-delay-5">
+          <div class="stat-mini-num">24/7</div>
+          <div class="stat-mini-label">AI client responses</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="dot"></span> Accounting Firms</span>
+    <span class="marquee-item"><span class="dot"></span> Legal Practices</span>
+    <span class="marquee-item"><span class="dot"></span> Recruitment Agencies</span>
+    <span class="marquee-item"><span class="dot"></span> Financial Services</span>
+    <span class="marquee-item"><span class="dot"></span> Consulting Firms</span>
+    <span class="marquee-item"><span class="dot"></span> Professional Services</span>
+    <span class="marquee-item"><span class="dot"></span> Accounting Firms</span>
+    <span class="marquee-item"><span class="dot"></span> Legal Practices</span>
+    <span class="marquee-item"><span class="dot"></span> Recruitment Agencies</span>
+    <span class="marquee-item"><span class="dot"></span> Financial Services</span>
+    <span class="marquee-item"><span class="dot"></span> Consulting Firms</span>
+    <span class="marquee-item"><span class="dot"></span> Professional Services</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section" id="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div>
+        <div class="section-label reveal">The bottleneck</div>
+        <h2 class="reveal reveal-delay-1">Why growth<br>stalls at<br><span>mid-size</span></h2>
+        <p class="problem-lead reveal reveal-delay-2">Traditional workflows create friction at every turn. Your best people are buried in repetitive tasks instead of building client relationships.</p>
+        <blockquote class="problem-quote reveal reveal-delay-3">
+          "Growth requires hiring more junior staff for routine tasks — increasing overhead without improving margins."
+        </blockquote>
+      </div>
+      <div class="problem-items">
+        <div class="problem-item reveal"><div class="problem-num">01</div><div><div class="problem-title">Manual Data Entry</div><div class="problem-body">Document preparation and data entry consume hours daily, pulling senior staff away from strategic advisory work.</div></div></div>
+        <div class="problem-item reveal reveal-delay-1"><div class="problem-num">02</div><div><div class="problem-title">Repetitive Onboarding</div><div class="problem-body">Client intake requires repetitive information gathering across multiple touchpoints, creating delays and frustration.</div></div></div>
+        <div class="problem-item reveal reveal-delay-2"><div class="problem-num">03</div><div><div class="problem-title">Compliance Burden</div><div class="problem-body">Tracking deadlines, managing checklists, and coordinating follow-ups are incredibly time-intensive and error-prone.</div></div></div>
+        <div class="problem-item reveal reveal-delay-3"><div class="problem-num">04</div><div><div class="problem-title">Delayed Responses</div><div class="problem-body">Slow turnaround on client inquiries during peak seasons damages relationships and creates competitive disadvantages.</div></div></div>
+        <div class="problem-item reveal reveal-delay-4"><div class="problem-num">05</div><div><div class="problem-title">Scaling Issues</div><div class="problem-body">Every new client requires proportionally more headcount — breaking the economics of growth for mid-size firms.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTIONS -->
+<section class="solutions-section" id="solutions">
+  <div class="container">
+    <div class="solutions-intro">
+      <div>
+        <div class="section-label reveal">What we build</div>
+        <h2 class="reveal reveal-delay-1">Intelligent automation<br>for your practice</h2>
+      </div>
+      <p class="reveal reveal-delay-2">Our automation platform handles routine tasks while your team focuses on building deeper client relationships and delivering strategic insights. Designed specifically for mid-size professional services firms.</p>
+    </div>
+    <div class="solutions-grid">
+      <div class="sol-card reveal"><div class="sol-icon">🤖</div><div class="sol-title">24/7 AI Chatbots</div><div class="sol-body">AI-powered chatbots handle initial client consultations, capturing key information and scheduling follow-ups automatically.</div><span class="sol-tag">Always on</span></div>
+      <div class="sol-card reveal reveal-delay-1"><div class="sol-icon">📄</div><div class="sol-title">Document Generation</div><div class="sol-body">Automated document creation generates forms, business plans, and compliance reports in minutes instead of hours.</div><span class="sol-tag">75% faster</span></div>
+      <div class="sol-card reveal reveal-delay-2"><div class="sol-icon">✅</div><div class="sol-title">Compliance Tracking</div><div class="sol-body">Automated compliance tracking and reminders ensure nothing falls through the cracks during busy season.</div><span class="sol-tag">Zero misses</span></div>
+      <div class="sol-card reveal reveal-delay-1"><div class="sol-icon">📊</div><div class="sol-title">Smart Data Collection</div><div class="sol-body">Intelligent data collection from clients eliminates back-and-forth emails and ensures you have what you need upfront.</div><span class="sol-tag">100% complete</span></div>
+      <div class="sol-card reveal reveal-delay-2"><div class="sol-icon">✉️</div><div class="sol-title">Email Workflows</div><div class="sol-body">Smart communication workflows route inquiries to the right team member and respond instantly to common questions.</div><span class="sol-tag">Instant routing</span></div>
+      <div class="sol-card reveal reveal-delay-3"><div class="sol-icon">⚙️</div><div class="sol-title">Visual Workflow Builder</div><div class="sol-body">Clear, visual logic with n8n. Any team member can understand and update processes without IT.</div><span class="sol-tag">No-code</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS (dark stripe) -->
+<section class="how-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label reveal" style="justify-content:center;">How it works</div>
+      <h2 class="reveal reveal-delay-1">From consultation<br>to live automation</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-step reveal"><div class="how-num-wrap"><span class="how-num">01</span></div><div class="how-title">Free Consultation</div><div class="how-desc">We identify the highest-impact automation opportunities specific to your firm's workflow.</div></div>
+      <div class="how-step reveal reveal-delay-1"><div class="how-num-wrap"><span class="how-num">02</span></div><div class="how-title">Custom ROI Analysis</div><div class="how-desc">Detailed analysis of projected time savings, cost reduction, and productivity gains.</div></div>
+      <div class="how-step reveal reveal-delay-2"><div class="how-num-wrap"><span class="how-num">03</span></div><div class="how-title">Implementation</div><div class="how-desc">Launch new automations in days, not months. Full visibility into every workflow step.</div></div>
+      <div class="how-step reveal reveal-delay-3"><div class="how-num-wrap"><span class="how-num">04</span></div><div class="how-title">Ongoing Support</div><div class="how-desc">Continuous optimisation and updates as your practice grows and your needs evolve.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE STUDIES -->
+<section class="cases-section" id="cases">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:3rem;">
+      <div class="section-label reveal">Real results</div>
+      <h2 class="reveal reveal-delay-1">Case studies</h2>
+    </div>
+    <div class="cases-tabs reveal">
+      <button class="case-tab active" onclick="showCase('onboarding',this)">Client Onboarding</button>
+      <button class="case-tab" onclick="showCase('docs',this)">Document Generation</button>
+      <button class="case-tab" onclick="showCase('comms',this)">24/7 Communication</button>
+    </div>
+    <div class="case-panel active" id="case-onboarding">
+      <div class="case-story">
+        <h3>Automated Client Onboarding</h3>
+        <p>An accounting firm struggled with inconsistent client intake, spending 2–3 hours per new client gathering basic information through phone calls, emails, and manual data entry.</p>
+        <div class="case-before-after">
+          <div class="ba-col before"><div class="ba-label">Before</div><ul class="ba-list"><li>2–3 hours manual intake per client</li><li>Multiple follow-up calls for missing info</li><li>Inconsistent data quality</li><li>Staff frustration</li><li>Delayed project kickoffs</li></ul></div>
+          <div class="ba-col after"><div class="ba-label">After</div><ul class="ba-list"><li>30 min automated collection + review</li><li>AI chatbot guides structured intake</li><li>Consistent, complete data every time</li><li>Instant validation</li><li>Same-day project kickoffs</li></ul></div>
+        </div>
+      </div>
+      <div class="case-metrics">
+        <div class="metric-card"><div class="metric-num">1.4×</div><div><div class="metric-info-label">Productivity Increase</div><div class="metric-info-desc">Staff onboard 40% more clients in the same timeframe</div></div></div>
+        <div class="metric-card"><div class="metric-num">85%</div><div><div class="metric-info-label">Faster Client Setup</div><div class="metric-info-desc">Average setup time reduced from hours to minutes</div></div></div>
+        <div class="metric-card"><div class="metric-num">100%</div><div><div class="metric-info-label">Data Consistency</div><div class="metric-info-desc">Complete information on first submission, every time</div></div></div>
+      </div>
+    </div>
+    <div class="case-panel" id="case-docs">
+      <div class="case-story">
+        <h3>Intelligent Document Generation</h3>
+        <p>Manual creation of tax forms, business plans, and compliance documents consumed hours of billable time. Senior accountants spent expertise on formatting instead of analysis.</p>
+        <div class="case-before-after">
+          <div class="ba-col before"><div class="ba-label">Before</div><ul class="ba-list"><li>Hours per document manually</li><li>Senior staff doing data entry</li><li>Formatting errors</li><li>Slow client turnaround</li></ul></div>
+          <div class="ba-col after"><div class="ba-label">After</div><ul class="ba-list"><li>AI generates near-perfect drafts instantly</li><li>Staff focus exclusively on review</li><li>Automated validation catches mistakes</li><li>Every doc follows firm standards</li></ul></div>
+        </div>
+      </div>
+      <div class="case-metrics">
+        <div class="metric-card"><div class="metric-num">75%</div><div><div class="metric-info-label">Time Savings</div><div class="metric-info-desc">Document creation time reduced by three-quarters</div></div></div>
+        <div class="metric-card"><div class="metric-num">90%</div><div><div class="metric-info-label">Fewer Errors</div><div class="metric-info-desc">Automated validation catches mistakes before human review</div></div></div>
+        <div class="metric-card"><div class="metric-num">2×</div><div><div class="metric-info-label">Faster Delivery</div><div class="metric-info-desc">Client turnaround time cut in half across all document types</div></div></div>
+      </div>
+    </div>
+    <div class="case-panel" id="case-comms">
+      <div class="case-story">
+        <h3>24/7 Client Communication</h3>
+        <p>Traditional email-based communication meant clients waited hours or days for answers. During high season, response times stretched even longer, creating frustration and service gaps.</p>
+        <div class="case-before-after">
+          <div class="ba-col before"><div class="ba-label">Before</div><ul class="ba-list"><li>24–48 hour response delays</li><li>Simple questions drain staff time</li><li>Peak season service gaps</li><li>Declining client satisfaction</li></ul></div>
+          <div class="ba-col after"><div class="ba-label">After</div><ul class="ba-list"><li>AI handles 80% of inquiries instantly</li><li>Complex issues routed to specialists</li><li>24/7 availability, any time zone</li><li>NPS scores increased +2.8 points</li></ul></div>
+        </div>
+      </div>
+      <div class="case-metrics">
+        <div class="metric-card"><div class="metric-num">100%</div><div><div class="metric-info-label">Instant Responses</div><div class="metric-info-desc">All inquiries answered immediately, any time of day or night</div></div></div>
+        <div class="metric-card"><div class="metric-num">+2.8</div><div><div class="metric-info-label">NPS Score Increase</div><div class="metric-info-desc">Clients appreciate immediate answers and faster resolution</div></div></div>
+        <div class="metric-card"><div class="metric-num">1.5×</div><div><div class="metric-info-label">Team Productivity</div><div class="metric-info-desc">Staff freed from routine questions to focus on high-value advisory</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section class="tech-section">
+  <div class="container">
+    <div class="tech-inner">
+      <div>
+        <div class="section-label reveal">Built for professionals</div>
+        <h2 class="reveal reveal-delay-1" style="font-size:clamp(1.8rem,3vw,2.8rem);">Not for<br>developers</h2>
+        <p class="reveal reveal-delay-2" style="margin-top:1rem; max-width:320px;">Visual workflow builders using n8n. Any team member can understand and update processes — no IT required.</p>
+      </div>
+      <div class="tech-features">
+        <div class="tech-feat reveal"><div class="tech-feat-icon">👁</div><div><div class="tech-feat-title">Full Transparency</div><div class="tech-feat-desc">See exactly how data moves through your firm at every step.</div></div></div>
+        <div class="tech-feat reveal reveal-delay-1"><div class="tech-feat-icon">⚡</div><div><div class="tech-feat-title">Rapid Launch</div><div class="tech-feat-desc">New automations live in days, not months.</div></div></div>
+        <div class="tech-feat reveal reveal-delay-2"><div class="tech-feat-icon">✏️</div><div><div class="tech-feat-title">Easy Updates</div><div class="tech-feat-desc">Any team member can modify workflows without calling IT.</div></div></div>
+        <div class="tech-feat reveal reveal-delay-3"><div class="tech-feat-icon">💷</div><div><div class="tech-feat-title">Cost Effective</div><div class="tech-feat-desc">Reduces dependency on expensive developers and maintenance.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="results-section" id="results">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="section-label reveal" style="justify-content:center;">The business case</div>
+      <h2 class="reveal reveal-delay-1">Transform every dimension<br>of your practice</h2>
+    </div>
+    <div class="results-grid">
+      <div class="result-cell reveal" data-icon="📈"><div class="result-num">↑40%</div><div class="result-label">Scalability</div><div class="result-desc">Grow your client base without proportional cost increases</div></div>
+      <div class="result-cell reveal reveal-delay-1" data-icon="💰"><div class="result-num">1.5×</div><div class="result-label">Profitability</div><div class="result-desc">Serve more clients without hiring additional staff</div></div>
+      <div class="result-cell reveal reveal-delay-2" data-icon="✨"><div class="result-num">90%</div><div class="result-label">Quality</div><div class="result-desc">Fewer errors and consistent processes across all accounts</div></div>
+      <div class="result-cell reveal reveal-delay-3" data-icon="🤝"><div class="result-num">+2.8</div><div class="result-label">Client Retention</div><div class="result-desc">Faster response times lead to better service and loyalty</div></div>
+      <div class="result-cell reveal reveal-delay-4" data-icon="🛡"><div class="result-num">Zero</div><div class="result-label">Compliance Misses</div><div class="result-desc">Automated tracking significantly reduces regulatory risk</div></div>
+      <div class="result-cell reveal reveal-delay-5" data-icon="😊"><div class="result-num">↓80%</div><div class="result-label">Repetitive Work</div><div class="result-desc">Staff focus on high-value advisory instead of routine tasks</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-frame">
+        <div class="section-label reveal" style="justify-content:center;">Get started</div>
+        <h2 class="reveal reveal-delay-1">Ready to <em>automate</em><br>your practice?</h2>
+        <p class="reveal reveal-delay-2">Start with a free consultation to identify your highest-impact automation opportunities. No commitment required.</p>
+        <div class="cta-steps reveal reveal-delay-3">
+          <div class="cta-step"><div class="cta-step-num">1</div> Free Consultation</div>
+          <div class="cta-step"><div class="cta-step-num">2</div> Custom ROI Analysis</div>
+          <div class="cta-step"><div class="cta-step-num">3</div> Implementation Roadmap</div>
+          <div class="cta-step"><div class="cta-step-num">4</div> Ongoing Support</div>
+        </div>
+        <div class="cta-actions reveal reveal-delay-4">
+          <a href="https://calendly.com/ai-automation-studio" target="_blank" class="btn-bronze">
+            Schedule a Free Call →
+          </a>
+          <a href="mailto:boris.korol@ai-automation.studio" class="btn-secondary" style="color:var(--ink-mid); border-color:var(--border);">
+            Or email us
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AI Automation Studio</div>
+        <p class="footer-tagline">AI-powered automation for professional services firms. Accounting, legal, and recruitment firms scale without proportional headcount growth.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Solutions</div>
+        <ul class="footer-links">
+          <li><a href="#">Client Onboarding</a></li>
+          <li><a href="#">Document Generation</a></li>
+          <li><a href="#">Compliance Tracking</a></li>
+          <li><a href="#">Email Workflows</a></li>
+          <li><a href="#">AI Chatbots</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="https://calendly.com/ai-automation-studio" target="_blank">Book a Call</a></li>
+          <li><a href="mailto:boris.korol@ai-automation.studio">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 AI Automation Studio. All rights reserved.</span>
+      <span>ai-automation.studio</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+// Counters
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.target);
+  const isFloat = target !== Math.floor(target);
+  const start = performance.now();
+  const update = now => {
+    const p = Math.min((now - start) / 1600, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = isFloat ? (target * ease).toFixed(1) : Math.floor(target * ease);
+    if (p < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+const cObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); cObs.unobserve(e.target); } });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(el => cObs.observe(el));
+
+// Tabs
+function showCase(id, btn) {
+  document.querySelectorAll('.case-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('case-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
