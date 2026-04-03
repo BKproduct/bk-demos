@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: transparent; width: 600px; height: 200px; overflow: hidden; }
+</style>
+</head>
+<body>
+<svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#26A688;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3fbfa1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0B0E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#111827;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="600" height="200" rx="16" fill="url(#bg1)"/>
+  <!-- Signal arc mark -->
+  <g transform="translate(60, 100)">
+    <!-- Outer arc -->
+    <path d="M -32 -32 A 45 45 0 0 1 32 -32" stroke="url(#teal)" stroke-width="3" fill="none" opacity="0.4"/>
+    <!-- Middle arc -->
+    <path d="M -22 -18 A 31 31 0 0 1 22 -18" stroke="url(#teal)" stroke-width="3" fill="none" opacity="0.7"/>
+    <!-- Inner arc -->
+    <path d="M -12 -4 A 17 17 0 0 1 12 -4" stroke="url(#teal)" stroke-width="3" fill="none" opacity="1"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="8" r="4" fill="url(#teal)"/>
+    <!-- Circuit lines down -->
+    <line x1="0" y1="12" x2="0" y2="28" stroke="url(#teal)" stroke-width="2"/>
+    <line x1="-16" y1="28" x2="16" y2="28" stroke="url(#teal)" stroke-width="2"/>
+    <circle cx="-16" cy="28" r="3" fill="none" stroke="url(#teal)" stroke-width="2"/>
+    <circle cx="16" cy="28" r="3" fill="none" stroke="url(#teal)" stroke-width="2"/>
+  </g>
+  <!-- Vertical divider -->
+  <line x1="110" y1="50" x2="110" y2="150" stroke="#26A688" stroke-width="1" opacity="0.3"/>
+  <!-- Text: AAS -->
+  <text x="130" y="82" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="42" letter-spacing="-1" fill="white">AAS</text>
+  <!-- Tagline block -->
+  <text x="132" y="108" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="13" letter-spacing="4" fill="#26A688">AI AUTOMATION</text>
+  <text x="132" y="127" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="13" letter-spacing="4" fill="#888">STUDIO</text>
+  <!-- Corner accent -->
+  <rect x="542" y="14" width="44" height="2" fill="url(#teal)" rx="1"/>
+  <rect x="572" y="14" width="2" height="44" fill="url(#teal)" rx="1"/>
+</svg>
+</body>
+</html>

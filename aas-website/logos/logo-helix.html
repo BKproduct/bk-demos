@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>* { margin: 0; padding: 0; box-sizing: border-box; } body { background: transparent; width: 600px; height: 200px; overflow: hidden; }</style>
+</head>
+<body>
+<svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="agrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="100%" style="stop-color:#888888"/>
+    </linearGradient>
+    <linearGradient id="cgrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#26A688"/>
+      <stop offset="100%" style="stop-color:#1a7a64"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#26A688;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#26A688;stop-opacity:0"/>
+    </radialGradient>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#060A14"/>
+      <stop offset="100%" style="stop-color:#0A1628"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="200" rx="16" fill="url(#bg3)"/>
+  <!-- Glow behind mark -->
+  <circle cx="72" cy="100" r="55" fill="url(#glow)"/>
+  <!-- Hexagonal network mark -->
+  <g transform="translate(72, 100)">
+    <!-- Hexagon outline -->
+    <polygon points="0,-42 36,-21 36,21 0,42 -36,21 -36,-21" stroke="#26A688" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <!-- Inner hex -->
+    <polygon points="0,-26 22,-13 22,13 0,26 -22,13 -22,-13" stroke="#26A688" stroke-width="1.5" fill="none" opacity="0.8"/>
+    <!-- Center A letterform -->
+    <text x="0" y="10" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="30" text-anchor="middle" fill="url(#cgrad)">A</text>
+    <!-- Node dots at hex vertices -->
+    <circle cx="0" cy="-42" r="3" fill="#26A688"/>
+    <circle cx="36" cy="-21" r="3" fill="#26A688" opacity="0.7"/>
+    <circle cx="36" cy="21" r="3" fill="#26A688" opacity="0.7"/>
+    <circle cx="0" cy="42" r="3" fill="#26A688"/>
+    <circle cx="-36" cy="21" r="3" fill="#26A688" opacity="0.7"/>
+    <circle cx="-36" cy="-21" r="3" fill="#26A688" opacity="0.7"/>
+  </g>
+  <!-- Vertical rule -->
+  <line x1="130" y1="48" x2="130" y2="152" stroke="#26A688" stroke-width="1" opacity="0.2"/>
+  <!-- Primary wordmark - bold uppercase -->
+  <text x="150" y="84" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="26" letter-spacing="6" fill="url(#agrad)">AI AUTOMATION</text>
+  <text x="150" y="117" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="200" font-size="26" letter-spacing="12" fill="#26A688">STUDIO</text>
+  <!-- Horizontal accent line -->
+  <line x1="150" y1="127" x2="520" y2="127" stroke="#26A688" stroke-width="0.5" opacity="0.4"/>
+  <!-- Tagline -->
+  <text x="150" y="148" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="10" letter-spacing="2" fill="#4A7A6E">INTELLIGENT AUTOMATION FOR PROFESSIONAL SERVICES</text>
+</svg>
+</body>
+</html>
